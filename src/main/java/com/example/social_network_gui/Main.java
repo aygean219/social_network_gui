@@ -11,12 +11,16 @@ import com.example.social_network_gui.validators.FriendshipValidator;
 import com.example.social_network_gui.validators.UserValidator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 
 public class Main extends Application {
+
+    private static Stage stage;
 
 
     public static void main(String[] args) {
@@ -33,11 +37,11 @@ public class Main extends Application {
         Repository<Long, RoleType> roleTypeRepository = new RolesDatabaseRepository("jdbc:postgresql://localhost:5432/lab3_database", "postgres", "aygean");
         UserService userService = new UserService(userDatabaseRepository, new UserValidator());
         FriendshipService friendshipService = new FriendshipService(friendshipDatabaseRepository, new FriendshipValidator());
-
         NetworkService networkService = new NetworkService(friendshipDatabaseRepository, userDatabaseRepository, friendRequestRepository, messageRepository, roleTypeRepository);
 
+        stage = primaryStage;
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("login-view.fxml"));
+        loader.setLocation(getClass().getResource("controller/login-view.fxml"));
 
         AnchorPane root = loader.load();
 
@@ -47,7 +51,11 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 400, 300));
         primaryStage.setTitle("Social Network");
         primaryStage.show();
+    }
 
+    public void changeScene(String fxml) throws IOException {
+        Parent pane = FXMLLoader.load(getClass().getResource(fxml));
+        stage.getScene().setRoot(pane);
 
     }
 
