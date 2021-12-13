@@ -6,7 +6,10 @@ import com.example.social_network_gui.service.UserService;
 import com.example.social_network_gui.validators.ValidationException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.time.LocalDateTime;
@@ -38,14 +41,24 @@ public class LoginController {
 
     }
 
-    public void loginAction(ActionEvent actionEvent) {
+    public void loginAction(ActionEvent actionEvent) throws Exception {
         try{
         networkService.login(emailField.getText(),passwordField.getText());
         }
         catch (ValidationException e){
             errorLabel.setText(e.getMessage());
         }
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/com/example/social_network_gui/menu-view.fxml"));
+        Pane root;
+        root = loader.load();
 
+
+        Stage register_stage=new Stage();
+        MenuMainController menuMainController=loader.getController();
+        menuMainController.initial(userService,friendshipService,networkService);
+        register_stage.setScene(new Scene(root));
+        register_stage.show();
     }
 
 }

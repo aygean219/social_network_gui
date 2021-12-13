@@ -70,7 +70,8 @@ public class UserService {
         FreeId = 0L;
     }
 
-    public User getUser(List<User> list, Long id){
+    public User getUser( Long id){
+        List<User> list = repositoryUser.findAll();
         for(User u: list){
             if(u.getId() == id){
                 return u;

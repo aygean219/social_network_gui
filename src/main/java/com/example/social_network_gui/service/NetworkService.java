@@ -43,8 +43,6 @@ public class NetworkService {
         if(roles.size()>1 && roles.size()!=0){
             throw new ValidationException("This account has more roles please choose just 1 role( member or administrator):");
         }else{
-           // System.out.println("size:"+roles.size());
-
             roleType = roles.get(0);
         }
     }
@@ -217,6 +215,9 @@ public class NetworkService {
                 }).collect(Collectors.toList());
     }
 
+    public Iterable<FriendRequest> friendshipIterable(){
+        return repoRequests.findAll();
+    }
     public Iterable<FriendshipDTO> friendsListOfUserByDate(String id, String month) {
         Iterable<Friendship> friendships = repo.findAll();
         return StreamSupport.stream(friendships.spliterator(), false)
@@ -250,6 +251,9 @@ public class NetworkService {
         }
     }
 
+    public FriendRequest getRequest(Tuple<User, User> entity){
+        return repoRequests.findOne(entity).get();
+    }
     public Iterable<FriendRequest> getFriendRequests() {
         Iterable<FriendRequest> requests = repoRequests.findAll();
         if (loggedUser.getId() == 0L)
