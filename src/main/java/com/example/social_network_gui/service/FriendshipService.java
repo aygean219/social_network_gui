@@ -4,13 +4,10 @@ import com.example.social_network_gui.domain.Friendship;
 import com.example.social_network_gui.domain.Tuple;
 import com.example.social_network_gui.domain.User;
 import com.example.social_network_gui.repository.Repository;
-import com.example.social_network_gui.repository.memory.RepositoryException;
-import com.example.social_network_gui.utils.Graph;
-import com.example.social_network_gui.validators.FriendshipValidator;
 import com.example.social_network_gui.validators.Validator;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class FriendshipService {
     private final Repository<Tuple<User,User>, Friendship> repo;
@@ -26,6 +23,10 @@ public class FriendshipService {
      * */
     public ArrayList<Friendship> getAll(){
         return repo.findAll();
+    }
+
+    public Optional<Friendship> getOne(Tuple<User,User> id){
+        return repo.findOne(id);
     }
 
     /**

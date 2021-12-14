@@ -14,16 +14,16 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="328.0" prefWidth="315.0" style="-fx-background-color: #28AFB0;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.SignupController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="377.0" prefWidth="334.0" style="-fx-background-color: #28AFB0;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.SignupController">
     <children>
-        <Button fx:id="signupButton" layoutX="101.0" layoutY="267.0" mnemonicParsing="false" onAction="#signupAction" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #28AFB0;" text="Sign up" underline="true">
+        <Button fx:id="signupButton" layoutX="117.0" layoutY="309.0" mnemonicParsing="false" onAction="#signupAction" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #28AFB0;" text="SIGN UP">
          <font>
             <Font name="Arial Rounded MT Bold" size="14.0" />
          </font></Button>
-      <GridPane layoutX="22.0" layoutY="25.0" prefHeight="217.0" prefWidth="282.0">
+      <GridPane layoutX="26.0" layoutY="72.0" prefHeight="217.0" prefWidth="282.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="105.20001220703125" minWidth="10.0" prefWidth="71.80003662109375" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="146.99996337890627" minWidth="10.0" prefWidth="146.99996337890627" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="105.20001220703125" minWidth="10.0" prefWidth="92.0000244140625" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.7999755859375" minWidth="10.0" prefWidth="160.7999755859375" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -63,7 +63,7 @@
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font></Label>
-            <ComboBox fx:id="genderCombobox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <ComboBox fx:id="genderCombobox" prefHeight="26.0" prefWidth="160.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Male" />
@@ -77,6 +77,11 @@
       <Label fx:id="errorLabel" layoutX="135.0" layoutY="251.0" textFill="#cf1212">
          <font>
             <Font name="Arial Rounded MT Bold" size="13.0" />
+         </font>
+      </Label>
+      <Label layoutX="58.0" layoutY="7.0" text="Create account">
+         <font>
+            <Font name="System Bold" size="31.0" />
          </font>
       </Label>
     </children>

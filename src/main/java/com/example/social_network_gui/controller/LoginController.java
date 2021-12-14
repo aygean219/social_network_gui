@@ -1,7 +1,6 @@
 package com.example.social_network_gui.controller;
 
 import com.example.social_network_gui.Main;
-import com.example.social_network_gui.controller.SignupController;
 import com.example.social_network_gui.service.FriendshipService;
 import com.example.social_network_gui.service.NetworkService;
 import com.example.social_network_gui.service.UserService;
@@ -47,9 +46,30 @@ public class LoginController {
 
     }
 
-    public void loginAction(ActionEvent actionEvent) {
+    public void loginAction(ActionEvent actionEvent) throws IOException {
         try {
             networkService.login(emailField.getText(), passwordField.getText());
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("managefriends-view.fxml"));
+
+
+            AnchorPane root = loader.load();
+
+            ManageFriendsController ctrl = loader.getController();
+            ctrl.setService(networkService,friendshipService);
+
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Account");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            Scene scene = new Scene(root);
+            dialogStage.setScene(scene);
+
+
+
+            dialogStage.show();
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            stage.close();
         } catch (ValidationException e) {
             errorLabel.setText(e.getMessage());
         }
@@ -57,8 +77,6 @@ public class LoginController {
     }
 
     public void signupAction(ActionEvent actionEvent) {
-        Main main = new Main();
-        //main.changeScene("signup-view.fxml");
         try {
             FXMLLoader loader = new FXMLLoader();
 
@@ -74,7 +92,7 @@ public class LoginController {
             dialogStage.setScene(scene);
 
             SignupController ctrl = loader.getController();
-            ctrl.setServices(networkService);
+            ctrl.setServices(networkService,friendshipService);
 
             dialogStage.show();
             Stage stage = (Stage) loginButton.getScene().getWindow();

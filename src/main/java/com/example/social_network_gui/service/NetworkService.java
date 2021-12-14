@@ -2,7 +2,6 @@ package com.example.social_network_gui.service;
 
 import com.example.social_network_gui.domain.*;
 import com.example.social_network_gui.repository.Repository;
-import com.example.social_network_gui.repository.database.MessageDatabaseRepository;
 import com.example.social_network_gui.repository.memory.RepositoryException;
 import com.example.social_network_gui.utils.Graph;
 import com.example.social_network_gui.utils.Status;
@@ -21,73 +20,71 @@ public class NetworkService {
     private final Repository<Tuple<User, User>, Friendship> repo;
     private final Repository<Long, User> repoUser;
     private final Repository<Tuple<User, User>, FriendRequest> repoRequests;
-    private final Repository<Long,Message> messageRepository;
-    private final Repository<Long,RoleType> roleTypeRepository;
+    private final Repository<Long, Message> messageRepository;
+    private final Repository<Long, RoleType> roleTypeRepository;
     private User loggedUser;
     private Long FreeIdMessage;
     private RoleType roleType;
 
     public NetworkService(Repository<Tuple<User, User>, Friendship> repo, Repository<Long, User> repoUser,
                           Repository<Tuple<User, User>, FriendRequest> repoRequest,
-                          Repository<Long,Message> messageRepository,Repository<Long,RoleType> roleTypeRepository) {
+                          Repository<Long, Message> messageRepository, Repository<Long, RoleType> roleTypeRepository) {
         this.repo = repo;
         this.repoUser = repoUser;
         this.repoRequests = repoRequest;
         this.messageRepository = messageRepository;
         this.FreeIdMessage = 0L;
-        this.roleTypeRepository=roleTypeRepository;
+        this.roleTypeRepository = roleTypeRepository;
     }
 
-    public void getRoles(){
+    public void getRoles() {
         ArrayList<RoleType> roles = roleTypeRepository.findRoles(loggedUser);
-        if(roles.size()>1 && roles.size()!=0){
+        if (roles.size() > 1 && roles.size() != 0) {
             throw new ValidationException("This account has more roles please choose just 1 role( member or administrator):");
-        }else{
-           // System.out.println("size:"+roles.size());
+        } else {
+            // System.out.println("size:"+roles.size());
 
             roleType = roles.get(0);
         }
     }
 
-    public void setRole(String role){
+    public void setRole(String role) {
         ArrayList<RoleType> roles = roleTypeRepository.findRoles(loggedUser);
-        if(roles.size()>1 && roles.size()!=0){
-            if(role.equals("member") || role.equals("administrator")){
-                roleType=new RoleType(loggedUser,role);
+        if (roles.size() > 1 && roles.size() != 0) {
+            if (role.equals("member") || role.equals("administrator")) {
+                roleType = new RoleType(loggedUser, role);
             }
         }
     }
 
-    public void switchRoles(){
+    public void switchRoles() {
         ArrayList<RoleType> roles = roleTypeRepository.findRoles(loggedUser);
-        if(roles.size()==2){
-            if(roleType.getRole().equals("member")){
+        if (roles.size() == 2) {
+            if (roleType.getRole().equals("member")) {
                 roleType.setRole("administrator");
-            }
-            else {
+            } else {
                 roleType.setRole("member");
             }
         }
     }
-    public void login(String email,String password){
-        if(repoUser.findloggedUser(email,password).isPresent()){
-            loggedUser = repoUser.findloggedUser(email,password).get();
-        }
-        else {
-            throw new ValidationException("User does not exist");
+
+    public void login(String email, String password) {
+        if (repoUser.findloggedUser(email, password).isPresent()) {
+            loggedUser = repoUser.findloggedUser(email, password).get();
+        } else {
+            throw new ValidationException("Incorrect email or password.");
         }
     }
 
-    public void signup(String firstName,String lastName,String date,String gender,String email,String password){
-        if(repoUser.findUser(email).isPresent()){
-            throw new ValidationException("User exist already try to login!");
-        }
-        else{
-            loggedUser = new User(firstName,lastName,date,gender,email,password);
+    public void signup(String firstName, String lastName, String date, String gender, String email, String password) {
+        if (repoUser.findUser(email).isPresent()) {
+            throw new ValidationException("User exist already. Try to login.");
+        } else {
+            loggedUser = new User(firstName, lastName, date, gender, email, password);
             //free id for user
             Long FreeId = 0L;
             int nr = 0;
-            for(User user: repoUser.findAll()) {
+            for (User user : repoUser.findAll()) {
                 FreeId++;
                 nr++;
                 if (!FreeId.equals(user.getId())) {
@@ -95,14 +92,14 @@ public class NetworkService {
                 }
 
             }
-            if( nr == repoUser.findAll().size())
+            if (nr == repoUser.findAll().size())
                 FreeId++;
             loggedUser.setId(FreeId);
             repoUser.save(loggedUser);
             //free id for role type
             FreeId = 0L;
             nr = 0;
-            for(RoleType role: roleTypeRepository.findAll()) {
+            for (RoleType role : roleTypeRepository.findAll()) {
                 FreeId++;
                 nr++;
                 if (!FreeId.equals(role.getId())) {
@@ -110,9 +107,9 @@ public class NetworkService {
                 }
 
             }
-            if( nr == roleTypeRepository.findAll().size())
+            if (nr == roleTypeRepository.findAll().size())
                 FreeId++;
-            roleType = new RoleType(loggedUser,"member");
+            roleType = new RoleType(loggedUser, "member");
             roleType.setId(FreeId);
             roleTypeRepository.save(roleType);
         }
@@ -287,31 +284,32 @@ public class NetworkService {
         }
     }
 
-    public Iterable<Message> getAllMessages(){
+    public Iterable<Message> getAllMessages() {
         return messageRepository.findAll();
     }
-////////////////////////modifica sa raspunda la ultimul mesaj de la un user////////////////////////////
-    public List<MessageDTO> get_message_for_user_logged(){
+
+    ////////////////////////modifica sa raspunda la ultimul mesaj de la un user////////////////////////////
+    public List<MessageDTO> get_message_for_user_logged() {
 
         List<MessageDTO> listOfAllMessages = new ArrayList<>();
         List<Message> lista = messageRepository.findAll();
-        for(Message message: lista ){
+        for (Message message : lista) {
             //if(message.getTo().contains(loggedUser) && message.getReply() == 0){
             System.out.println(message);
-            if(message.getTo().contains(loggedUser) && message.getReply()!=null){
+            if (message.getTo().contains(loggedUser) && message.getReply() != null) {
 
 
-                listOfAllMessages.add(new MessageDTO(message.getId(),message.getFrom().getFirstName(),message.getMessage()));
+                listOfAllMessages.add(new MessageDTO(message.getId(), message.getFrom().getFirstName(), message.getMessage()));
             }
         }
         //fa un sort si ia ultimul mesaj de la fiecare user
         return listOfAllMessages;
     }
 
-    private void checkId(){
+    private void checkId() {
         FreeIdMessage = 0L;
         int nr = 0;
-        for(Message user: messageRepository.findAll()) {
+        for (Message user : messageRepository.findAll()) {
             FreeIdMessage++;
             nr++;
             if (!FreeIdMessage.equals(user.getId())) {
@@ -319,43 +317,43 @@ public class NetworkService {
             }
 
         }
-        if( nr == messageRepository.findAll().size())
+        if (nr == messageRepository.findAll().size())
             FreeIdMessage++;
     }
 
-    public void send_message( List<Long> receivers,String message){
+    public void send_message(List<Long> receivers, String message) {
         User sender = loggedUser;
         List<User> list_of_receivers = new ArrayList<>();
-        for (Long receiver: receivers){
-            if(receiver == loggedUser.getId()){
+        for (Long receiver : receivers) {
+            if (receiver == loggedUser.getId()) {
                 throw new ValidationException("You cannot send message to yourself!!");
             }
         }
-        for(Long i:receivers){
-            if(repoUser.findOne(i).isPresent()) {
+        for (Long i : receivers) {
+            if (repoUser.findOne(i).isPresent()) {
                 User user = repoUser.findOne(i).get();
                 list_of_receivers.add(user);
             }
         }
-        Message message1 = new Message(sender,list_of_receivers,message);
+        Message message1 = new Message(sender, list_of_receivers, message);
         checkId();
         message1.setId(FreeIdMessage);
         messageRepository.save(message1);
 
     }
 
-    public void reply_message(Long id_message,String message) {
+    public void reply_message(Long id_message, String message) {
         Message message0 = messageRepository.findOne(id_message).get();
         User replier = loggedUser;
-        if(message0.getFrom().getId()==null){
+        if (message0.getFrom().getId() == null) {
             throw new ValidationException("You cannot reply to the admin!");
         }
         List<User> list_of_messages = new ArrayList<>();
-        if (messageRepository.findOne(id_message).isPresent() ) {
+        if (messageRepository.findOne(id_message).isPresent()) {
             User user = messageRepository.findOne(id_message).get().getFrom();
             list_of_messages.add(user);
         }
-        Message replyMessage = new Message(replier,list_of_messages,message,message0);
+        Message replyMessage = new Message(replier, list_of_messages, message, message0);
         checkId();
         //message0.setReply(replyMessage);
         replyMessage.setId(FreeIdMessage);
@@ -363,25 +361,49 @@ public class NetworkService {
     }
 
 
-    public List<Message> cronological_message(Long id1){
+    public List<Message> cronological_message(Long id1) {
         Long id2 = loggedUser.getId();
         List<Message> mesaje = new ArrayList<>();
-        messageRepository.findAll().forEach(x->{
-            if((x.getFrom().getId() == id1 && x.getTo().contains(repoUser.findOne(id2).get()))||(x.getFrom().getId() == id2 && x.getTo().contains(repoUser.findOne(id1).get())))
+        messageRepository.findAll().forEach(x -> {
+            if ((x.getFrom().getId() == id1 && x.getTo().contains(repoUser.findOne(id2).get())) || (x.getFrom().getId() == id2 && x.getTo().contains(repoUser.findOne(id1).get())))
                 mesaje.add(x);
         });
-        if(mesaje.size() ==0){
+        if (mesaje.size() == 0) {
             throw new ValidationException("There is no messages between you and that user");
         }
-        return mesaje.stream().sorted((m1,m2)->m1.getDate().compareTo(m2.getDate())).collect(Collectors.toList());
+        return mesaje.stream().sorted((m1, m2) -> m1.getDate().compareTo(m2.getDate())).collect(Collectors.toList());
     }
 
-    public List<User> other_users(Long id){
+    public List<User> other_users(Long id) {
         List<User> users = new ArrayList<>();
-        repoUser.findAll().forEach(x->{
-            if(x.getId()!= id)
+        repoUser.findAll().forEach(x -> {
+            if (x.getId() != id)
                 users.add(x);
         });
         return users;
+    }
+
+    public List<User> getFriendsOfLoggeduser() {
+        Iterable<Friendship> all = repo.findAll();
+        return StreamSupport.stream(all.spliterator(), false)
+                .filter(friendship -> ((friendship.getId().getE2().equals(loggedUser) || friendship.getId().getE1().equals(loggedUser))))
+                .map(friendship -> {
+                    User user;
+                    if (friendship.getId().getE1().equals(loggedUser))
+                        user = friendship.getId().getE2();
+                    else user = friendship.getId().getE1();
+                    return user;
+                }).collect(Collectors.toList());
+    }
+
+    public List<User> getSuggestionsForLoggeduser() {
+        Iterable<User> all = repoUser.findAll();
+        List<User> suggestions = new ArrayList<>();
+        all.forEach(u -> {
+            if (!(u.equals(loggedUser)) && repo.findOne(new Tuple<>(loggedUser, u)).isEmpty() && repo.findOne(new Tuple<>(u, loggedUser)).isEmpty()) {
+                suggestions.add(u);
+            }
+        });
+        return suggestions;
     }
 }
