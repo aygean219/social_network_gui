@@ -38,10 +38,12 @@ public class SignupController {
 
     private NetworkService networkService;
     private FriendshipService friendshipService;
+    private UserService userService;
 
-    public void setServices(NetworkService networkService, FriendshipService friendshipService) {
+    public void setServices(NetworkService networkService, FriendshipService friendshipService,UserService userService) {
         this.networkService = networkService;
         this.friendshipService = friendshipService;
+        this.userService = userService;
 
     }
 
@@ -67,7 +69,7 @@ public class SignupController {
             AnchorPane root = loader.load();
 
             ManageFriendsController ctrl = loader.getController();
-            ctrl.setService(networkService, friendshipService);
+            ctrl.setService(networkService, friendshipService,userService);
 
 
             Stage dialogStage = new Stage();

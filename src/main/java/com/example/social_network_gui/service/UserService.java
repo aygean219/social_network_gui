@@ -13,7 +13,7 @@ public class UserService {
     private Long FreeId;
     private Validator<User> validator;
 
-    public UserService(Repository<Long, User> repositoryUser,Validator<User> validator) {
+    public UserService(Repository<Long, User> repositoryUser, Validator<User> validator) {
         this.repositoryUser = repositoryUser;
         FreeId = 0L;
         this.validator = validator;
@@ -22,10 +22,10 @@ public class UserService {
     /**
      * Set the id used for saving a user with the first id possible
      */
-    private void checkId(){
+    private void checkId() {
         FreeId = 0L;
         int nr = 0;
-        for(User user: repositoryUser.findAll()) {
+        for (User user : repositoryUser.findAll()) {
             FreeId++;
             nr++;
             if (!FreeId.equals(user.getId())) {
@@ -33,20 +33,21 @@ public class UserService {
             }
 
         }
-        if( nr == repositoryUser.findAll().size())
-                FreeId++;
+        if (nr == repositoryUser.findAll().size())
+            FreeId++;
     }
 
     /**
      * Create an user with the parameters and save it
+     *
      * @param firstName - The first name of the user
-     * @param lastName - The last name of the user
-     * @param date - The birthday of the user
-     * @param gender - The gender of the user
+     * @param lastName  - The last name of the user
+     * @param date      - The birthday of the user
+     * @param gender    - The gender of the user
      * @return the user saved
      */
-    public void addUser(String firstName,String lastName,String date,String gender,String email,String password){
-        User user = new User(firstName,lastName,date,gender,email,password);
+    public void addUser(String firstName, String lastName, String date, String gender, String email, String password) {
+        User user = new User(firstName, lastName, date, gender, email, password);
         validator.validate(user);
         checkId();
         user.setId(FreeId);
@@ -55,28 +56,29 @@ public class UserService {
 
     /**
      * @return all the users
-     * */
-    public ArrayList<User> getAll(){
+     */
+    public ArrayList<User> getAll() {
         return repositoryUser.findAll();
     }
 
     /**
      * Deletes the user with the provided id
+     *
      * @param id1 -id of the user to be deleted
      */
-    public void deleteUser(String id1){
-        Long id= FriendshipValidator.validateId(id1);
+    public void deleteUser(String id1) {
+        Long id = FriendshipValidator.validateId(id1);
         repositoryUser.delete(id);
         FreeId = 0L;
     }
 
-    public User getUser(List<User> list, Long id){
-        for(User u: list){
-            if(u.getId() == id){
+    public User getUser(Long id) {
+        List<User> list = repositoryUser.findAll();
+        for (User u : list) {
+            if (u.getId() == id) {
                 return u;
             }
         }
         return null;
     }
-
 }
