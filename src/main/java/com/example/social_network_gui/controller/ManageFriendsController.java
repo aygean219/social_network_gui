@@ -1,19 +1,27 @@
 package com.example.social_network_gui.controller;
 
+import com.example.social_network_gui.domain.FriendRequest;
+import com.example.social_network_gui.domain.RequestUserDTO;
 import com.example.social_network_gui.domain.Tuple;
 import com.example.social_network_gui.domain.User;
 import com.example.social_network_gui.repository.memory.RepositoryException;
 import com.example.social_network_gui.service.FriendshipService;
 import com.example.social_network_gui.service.NetworkService;
 import com.example.social_network_gui.service.UserService;
+import com.example.social_network_gui.utils.Status;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class ManageFriendsController {
     @FXML
@@ -39,6 +47,13 @@ public class ManageFriendsController {
     @FXML
     Button removeButton;
 
+    private ObservableList<RequestUserDTO> observableList = FXCollections.observableArrayList();
+    @FXML
+    public TableColumn<RequestUserDTO, Status> tableColumnStatus ;
+    @FXML
+    public TableColumn<RequestUserDTO,String> tableColumnName ;
+    @FXML
+    public TableView<RequestUserDTO> tableViewRequests ;
 
     ObservableList<User> friends = FXCollections.observableArrayList();
     ObservableList<User> users = FXCollections.observableArrayList();
@@ -46,9 +61,10 @@ public class ManageFriendsController {
     private FriendshipService friendshipService;
     private NetworkService networkService;
 
-    public void setService(NetworkService service, FriendshipService friendshipService) {
+    public void setService(NetworkService service, FriendshipService friendshipService,UserService userService) {
         this.networkService = service;
         this.friendshipService = friendshipService;
+        this.userService = userService;
         friends.setAll(networkService.getFriendsOfLoggeduser());
         users.setAll(networkService.getSuggestionsForLoggeduser());
 
@@ -59,7 +75,7 @@ public class ManageFriendsController {
             case "M" -> genderLabel.setText("Male");
             default -> genderLabel.setText("Other");
         }
-
+        observableList.setAll(requestUserDTOS());
         emailLabel.setText(networkService.getLoggedUser().getEmail());
     }
 
@@ -69,13 +85,56 @@ public class ManageFriendsController {
         tableColumnLastName.setCellValueFactory(new PropertyValueFactory<User, String>("lastName"));
         tableColumnFirstName1.setCellValueFactory(new PropertyValueFactory<User, String>("firstName"));
         tableColumnLastName1.setCellValueFactory(new PropertyValueFactory<User, String>("lastName"));
+        tableColumnName.setCellValueFactory(new PropertyValueFactory<RequestUserDTO,String>("name"));
+        tableColumnStatus.setCellValueFactory(new PropertyValueFactory<RequestUserDTO,Status>("status"));
 
+        tableViewRequests.setItems(observableList);
         tableViewFriends.setItems(friends);
         tableViewUsers.setItems(users);
 
 
     }
+    private ArrayList<RequestUserDTO> requestUserDTOS(){
+        Iterable<FriendRequest> friendships = networkService.friendshipIterable();
+        List<FriendRequest> friendshipRequests = new ArrayList<FriendRequest>();
 
+        friendshipRequests = StreamSupport.stream(friendships.spliterator(),false)
+                .filter(x->x.getId().getE2().getId().equals(networkService.getLoggedUser().getId()))
+                .collect(Collectors.toList());
+        ArrayList<Tuple<User,FriendRequest>> list = new ArrayList<Tuple<User,FriendRequest>>();
+        friendshipRequests.forEach(x->{
+            list.add(new Tuple<>(userService.getUser(x.getId().getE1().getId()),x));
+        });
+        ArrayList<RequestUserDTO> requestListOfUserDTOS = new ArrayList<RequestUserDTO>();
+        for(Tuple<User,FriendRequest> li: list){
+            String fullName = li.getE1().getFirstName() + " " +li.getE1().getLastName();
+            RequestUserDTO requestUserDTO = new RequestUserDTO(li.getE2().getId(),fullName,li.getE2().getStatus());
+            requestListOfUserDTOS.add(requestUserDTO);
+        }
+        return requestListOfUserDTOS;
+    }
+
+    public void accept_request(MouseEvent mouseEvent){
+        RequestUserDTO selected = (RequestUserDTO) tableViewRequests.getSelectionModel().getSelectedItem();
+        if(selected != null){
+            if(selected.getStatus().equals(Status.PENDING)){
+                FriendRequest request = networkService.getRequest(selected.getIdRequest());
+                networkService.acceptFriendRequest(request.getId().getE1().getId().toString());
+            }
+        }
+        observableList.setAll(requestUserDTOS());
+    }
+
+    public void reject_request(MouseEvent mouseEvent){
+        RequestUserDTO selected = (RequestUserDTO) tableViewRequests.getSelectionModel().getSelectedItem();
+        if(selected != null){
+            if(selected.getStatus().equals(Status.PENDING)){
+                FriendRequest request = networkService.getRequest(selected.getIdRequest());
+                networkService.rejectFriendRequest(request.getId().getE1().getId().toString());
+            }
+        }
+        observableList.setAll(requestUserDTOS());
+    }
     public void removeFriend(ActionEvent actionEvent) {
         User user = tableViewFriends.getSelectionModel().getSelectedItem();
         if (friendshipService.getOne(new Tuple<>(user, networkService.getLoggedUser())).isPresent())

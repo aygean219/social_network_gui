@@ -56,7 +56,7 @@ public class LoginController {
             AnchorPane root = loader.load();
 
             ManageFriendsController ctrl = loader.getController();
-            ctrl.setService(networkService,friendshipService);
+            ctrl.setService(networkService,friendshipService,userService);
 
 
             Stage dialogStage = new Stage();
@@ -92,7 +92,7 @@ public class LoginController {
             dialogStage.setScene(scene);
 
             SignupController ctrl = loader.getController();
-            ctrl.setServices(networkService,friendshipService);
+            ctrl.setServices(networkService,friendshipService,userService);
 
             dialogStage.show();
             Stage stage = (Stage) loginButton.getScene().getWindow();

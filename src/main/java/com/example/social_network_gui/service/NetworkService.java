@@ -214,6 +214,14 @@ public class NetworkService {
                 }).collect(Collectors.toList());
     }
 
+    public Iterable<FriendRequest> friendshipIterable(){
+        return repoRequests.findAll();
+    }
+
+    public FriendRequest getRequest(Tuple<User, User> entity){
+        return repoRequests.findOne(entity).get();
+    }
+
     public Iterable<FriendshipDTO> friendsListOfUserByDate(String id, String month) {
         Iterable<Friendship> friendships = repo.findAll();
         return StreamSupport.stream(friendships.spliterator(), false)
