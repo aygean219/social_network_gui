@@ -179,9 +179,10 @@ public class NetworkService {
         }
         Optional<User> user1 = repoUser.findOne(first);
         Optional<User> user2 = repoUser.findOne(second);
-        if (user1.isPresent() && user2.isPresent())
+        if (user1.isPresent() && user2.isPresent()) {
             repo.delete(new Tuple<>(user1.get(), user2.get()));
-        else
+            repoRequests.delete(new Tuple<>(user1.get(), user2.get()));
+        } else
             throw new RepositoryException("Invalid friendship!");
     }
 
@@ -243,12 +244,12 @@ public class NetworkService {
         Optional<User> user1 = repoUser.findOne(first);
         if (user1.isPresent()) {
             user = user1.get();
-            if (repo.findOne(new Tuple<>(user, loggedUser)).isPresent() || repo.findOne(new Tuple<>(loggedUser, user)).isPresent())
-                throw new RepositoryException("You are already friend with this user!");
-            if (repoRequests.findOne(new Tuple<>(user, loggedUser)).isPresent())
-                throw new RepositoryException("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
-            if (repoRequests.findOne(new Tuple<>(loggedUser, user)).isPresent())
-                throw new RepositoryException("You have already sent a friend request to " + user.getFirstName() + " " + user.getLastName());
+//            if (repo.findOne(new Tuple<>(user, loggedUser)).isPresent() || repo.findOne(new Tuple<>(loggedUser, user)).isPresent())
+//                throw new RepositoryException("You are already friend with this user!");
+//            if (repoRequests.findOne(new Tuple<>(user, loggedUser)).isPresent())
+//                throw new RepositoryException("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
+//            if (repoRequests.findOne(new Tuple<>(loggedUser, user)).isPresent())
+//                throw new RepositoryException("You have already sent a friend request to " + user.getFirstName() + " " + user.getLastName());
             repoRequests.save(new FriendRequest(new Tuple<>(loggedUser, user), Status.PENDING));
         } else {
             throw new ValidationException("Id does not exist!");
@@ -279,6 +280,7 @@ public class NetworkService {
             throw new ValidationException("You do not have a friend request from user with id " + id + "!");
         }
     }
+
 
     public void rejectFriendRequest(String id) {
         User user;
@@ -406,17 +408,22 @@ public class NetworkService {
 
     public List<User> getSuggestionsForLoggeduser() {
         Iterable<User> all = repoUser.findAll();
+        Iterable<FriendRequest> requests = repoRequests.findAll();
+        ArrayList<Friendship> friendships = repo.findAll();
         List<User> suggestions = new ArrayList<>();
         all.forEach(u -> {
+
             if (!(u.equals(loggedUser)) && repo.findOne(new Tuple<>(loggedUser, u)).isEmpty()
                     && repo.findOne(new Tuple<>(u, loggedUser)).isEmpty()
-                    && (repoRequests.findOne(new Tuple<>(loggedUser, u)).isEmpty()
-                    || repoRequests.findOne(new Tuple<>(loggedUser, u)).get().getStatus() == Status.REJECTED)
-                    && (repoRequests.findOne(new Tuple<>(u, loggedUser)).isEmpty()
-                    || repoRequests.findOne(new Tuple<>(u, loggedUser)).get().getStatus() == Status.REJECTED)){
+                    && (repoRequests.findOne(new Tuple<>(loggedUser, u)).isEmpty())
+                    && (repoRequests.findOne(new Tuple<>(u, loggedUser)).isEmpty())) {
                 suggestions.add(u);
             }
         });
         return suggestions;
+    }
+
+    public void deleteRequest(Tuple<User, User> id) {
+        repoRequests.delete(id);
     }
 }

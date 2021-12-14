@@ -127,6 +127,7 @@ public class ManageFriendsController {
             if (selected.getStatus().equals(Status.PENDING)) {
                 FriendRequest request = networkService.getRequest(selected.getIdRequest());
                 networkService.acceptFriendRequest(request.getId().getE1().getId().toString());
+
             }
         }
         observableList.setAll(requestUserDTOS());
@@ -148,12 +149,20 @@ public class ManageFriendsController {
     public void removeFriend(ActionEvent actionEvent) {
         User user = tableViewFriends.getSelectionModel().getSelectedItem();
         if (user != null) {
-            if (friendshipService.getOne(new Tuple<>(user, networkService.getLoggedUser())).isPresent())
-                friendshipService.deleteFriendShip(new Tuple<>(user, networkService.getLoggedUser()));
-            else
-                friendshipService.deleteFriendShip(new Tuple<>(networkService.getLoggedUser(), user));
-            tableViewFriends.getItems().removeAll(
-                    tableViewFriends.getSelectionModel().getSelectedItem());
+            try {
+
+                if (friendshipService.getOne(new Tuple<>(user, networkService.getLoggedUser())).isPresent()) {
+                    friendshipService.deleteFriendShip(new Tuple<>(user, networkService.getLoggedUser()));
+                } else {
+                    friendshipService.deleteFriendShip(new Tuple<>(networkService.getLoggedUser(), user));
+                }
+
+                tableViewFriends.getItems().removeAll(
+                        tableViewFriends.getSelectionModel().getSelectedItem());
+            } catch (RepositoryException e) {
+                System.out.println(e.getMessage());
+            }
+
         }
         users.setAll(networkService.getSuggestionsForLoggeduser());
     }
@@ -161,8 +170,12 @@ public class ManageFriendsController {
     public void addFriend(ActionEvent actionEvent) {
         User user = tableViewUsers.getSelectionModel().getSelectedItem();
         if (user != null) {
-            networkService.sendFriendRequest(user.getId().toString());
-            tableViewUsers.getItems().remove(user);
+            try {
+                networkService.sendFriendRequest(user.getId().toString());
+                tableViewUsers.getItems().remove(user);
+            } catch (RepositoryException e) {
+                System.out.println(e.getMessage());
+            }
         }
         observableList.setAll(requestUserDTOS());
     }

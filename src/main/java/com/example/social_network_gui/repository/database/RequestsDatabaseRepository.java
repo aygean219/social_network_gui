@@ -113,9 +113,10 @@ public class RequestsDatabaseRepository implements Repository<Tuple<User, User>,
     @Override
     public Optional<FriendRequest> save(FriendRequest entity) {
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM requests WHERE from_id=? AND to_id=?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM requests WHERE from_id=? AND to_id=? AND status=?");
             statement.setInt(1, entity.getId().getE1().getId().intValue());
             statement.setInt(2, entity.getId().getE2().getId().intValue());
+            statement.setString(3, entity.getStatus().toString());
             ResultSet rs = statement.executeQuery();
             if (rs.next())
                 throw new RepositoryException("FriendRequest already exists");
@@ -165,7 +166,7 @@ public class RequestsDatabaseRepository implements Repository<Tuple<User, User>,
     @Override
     public Optional<FriendRequest> update(FriendRequest entity) {
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM requests WHERE from_id=? AND to_id=?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM requests WHERE from_id=? AND to_id=? and status = 'PENDING'");
             statement.setInt(1, entity.getId().getE1().getId().intValue());
             statement.setInt(2, entity.getId().getE2().getId().intValue());
             ResultSet rs = statement.executeQuery();
