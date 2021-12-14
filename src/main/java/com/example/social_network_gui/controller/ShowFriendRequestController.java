@@ -66,11 +66,12 @@ public class ShowFriendRequestController {
             RequestUserDTO requestUserDTO = new RequestUserDTO(li.getE2().getId(),fullName,li.getE2().getStatus());
             requestListOfUserDTOS.add(requestUserDTO);
         }
+        System.out.println("-----------0----------- ");
         return requestListOfUserDTOS;
     }
 
     public void accept_request(MouseEvent mouseEvent){
-        System.out.println("-----------0----------- ");
+
         RequestUserDTO selected = (RequestUserDTO) tableViewRequests.getSelectionModel().getSelectedItem();
         if(selected != null){
             if(selected.getStatus().equals(Status.PENDING)){
