@@ -214,11 +214,11 @@ public class NetworkService {
                 }).collect(Collectors.toList());
     }
 
-    public Iterable<FriendRequest> friendshipIterable(){
+    public Iterable<FriendRequest> friendshipIterable() {
         return repoRequests.findAll();
     }
 
-    public FriendRequest getRequest(Tuple<User, User> entity){
+    public FriendRequest getRequest(Tuple<User, User> entity) {
         return repoRequests.findOne(entity).get();
     }
 
@@ -408,7 +408,12 @@ public class NetworkService {
         Iterable<User> all = repoUser.findAll();
         List<User> suggestions = new ArrayList<>();
         all.forEach(u -> {
-            if (!(u.equals(loggedUser)) && repo.findOne(new Tuple<>(loggedUser, u)).isEmpty() && repo.findOne(new Tuple<>(u, loggedUser)).isEmpty()) {
+            if (!(u.equals(loggedUser)) && repo.findOne(new Tuple<>(loggedUser, u)).isEmpty()
+                    && repo.findOne(new Tuple<>(u, loggedUser)).isEmpty()
+                    && (repoRequests.findOne(new Tuple<>(loggedUser, u)).isEmpty()
+                    || repoRequests.findOne(new Tuple<>(loggedUser, u)).get().getStatus() == Status.REJECTED)
+                    && (repoRequests.findOne(new Tuple<>(u, loggedUser)).isEmpty()
+                    || repoRequests.findOne(new Tuple<>(u, loggedUser)).get().getStatus() == Status.REJECTED)){
                 suggestions.add(u);
             }
         });

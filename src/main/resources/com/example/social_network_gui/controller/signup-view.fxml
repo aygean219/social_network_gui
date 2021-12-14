@@ -18,7 +18,7 @@
     <children>
         <Button fx:id="signupButton" layoutX="117.0" layoutY="309.0" mnemonicParsing="false" onAction="#signupAction" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #28AFB0;" text="SIGN UP">
          <font>
-            <Font name="Arial Rounded MT Bold" size="14.0" />
+            <Font name="System Bold" size="16.0" />
          </font></Button>
       <GridPane layoutX="26.0" layoutY="72.0" prefHeight="217.0" prefWidth="282.0">
         <columnConstraints>

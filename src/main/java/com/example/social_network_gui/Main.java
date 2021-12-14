@@ -14,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -39,7 +40,6 @@ public class Main extends Application {
         FriendshipService friendshipService = new FriendshipService(friendshipDatabaseRepository, new FriendshipValidator());
         NetworkService networkService = new NetworkService(friendshipDatabaseRepository, userDatabaseRepository, friendRequestRepository, messageRepository, roleTypeRepository);
 
-        stage = primaryStage;
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("controller/login-view.fxml"));
 
@@ -48,7 +48,8 @@ public class Main extends Application {
         LoginController ctrl = loader.getController();
         ctrl.setServices(userService, friendshipService, networkService);
 
-        primaryStage.setScene(new Scene(root, 400, 300));
+
+        primaryStage.setScene(new Scene(root));
         primaryStage.setTitle("Social Network");
         primaryStage.show();
     }

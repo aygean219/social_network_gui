@@ -23,7 +23,7 @@
       <PasswordField fx:id="passwordField" layoutX="186.0" layoutY="135.0" prefHeight="26.0" prefWidth="149.0" promptText="password" />
       <Button fx:id="loginButton" layoutX="171.0" layoutY="202.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="35.0" prefWidth="88.0" text="Login">
          <font>
-            <Font name="Arial Rounded MT Bold" size="18.0" />
+            <Font name="System Bold" size="18.0" />
          </font>
       </Button>
       <Label fx:id="errorLabel" layoutX="150.0" layoutY="169.0" textFill="#cf1212">
@@ -43,7 +43,7 @@
       </Label>
       <Button fx:id="signupButton" layoutX="165.0" layoutY="266.0" mnemonicParsing="false" onAction="#signupAction" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #28AFB0;" text="Sign up" underline="true">
          <font>
-            <Font name="Arial Rounded MT Bold" size="18.0" />
+            <Font name="System Bold" size="18.0" />
          </font>
       </Button>
    </children>

@@ -60,7 +60,7 @@ public class LoginController {
 
 
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Account");
+            dialogStage.setTitle("Social network");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
