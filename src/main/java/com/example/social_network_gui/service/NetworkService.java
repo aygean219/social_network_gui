@@ -5,6 +5,9 @@ import com.example.social_network_gui.repository.Repository;
 import com.example.social_network_gui.repository.memory.RepositoryException;
 import com.example.social_network_gui.utils.Graph;
 import com.example.social_network_gui.utils.Status;
+import com.example.social_network_gui.utils.events.RequestsChangeEvent;
+import com.example.social_network_gui.utils.observer.Observable;
+import com.example.social_network_gui.utils.observer.Observer;
 import com.example.social_network_gui.validators.FriendshipValidator;
 import com.example.social_network_gui.validators.ValidationException;
 
@@ -16,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class NetworkService {
+public class NetworkService implements Observable<RequestsChangeEvent> {
     private final Repository<Tuple<User, User>, Friendship> repo;
     private final Repository<Long, User> repoUser;
     private final Repository<Tuple<User, User>, FriendRequest> repoRequests;
@@ -425,5 +428,22 @@ public class NetworkService {
 
     public void deleteRequest(Tuple<User, User> id) {
         repoRequests.delete(id);
+    }
+
+    private List<Observer<RequestsChangeEvent>> observers = new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer<RequestsChangeEvent> e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer<RequestsChangeEvent> e) {
+        observers.remove(e);
+    }
+
+    @Override
+    public void notifyObservers(RequestsChangeEvent t) {
+        observers.stream().forEach(x -> x.update(t));
     }
 }
