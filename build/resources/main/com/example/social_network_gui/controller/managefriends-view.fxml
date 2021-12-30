@@ -28,22 +28,22 @@
                                     <Font name="Arial Rounded MT Bold" size="21.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="11.0" layoutY="224.0" prefHeight="22.0" prefWidth="122.0" style="-fx-border-color: #000000FF; -fx-border-width: 0 0 2 0;" text="ACCOUNT INFO">
+                              <Label layoutX="11.0" layoutY="224.0" prefHeight="22.0" prefWidth="123.0" style="-fx-border-color: #000000FF; -fx-border-width: 0 2 2 2;" text="ACCOUNT INFO">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="emailLabel" layoutX="16.0" layoutY="246.0" prefHeight="22.0" prefWidth="228.0">
+                              <Label fx:id="emailLabel" layoutX="20.0" layoutY="246.0" prefHeight="22.0" prefWidth="228.0">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="genderLabel" layoutX="15.0" layoutY="269.0" prefHeight="22.0" prefWidth="228.0">
+                              <Label fx:id="genderLabel" layoutX="19.0" layoutY="269.0" prefHeight="22.0" prefWidth="228.0">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="birthdateLabel" layoutX="14.0" layoutY="292.0" prefHeight="22.0" prefWidth="232.0">
+                              <Label fx:id="birthdateLabel" layoutX="18.0" layoutY="292.0" prefHeight="22.0" prefWidth="232.0">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
@@ -86,10 +86,10 @@
                                     <Font name="Arial Rounded MT Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <TableView fx:id="tableViewUsers" blendMode="DARKEN" layoutX="23.0" layoutY="43.0" prefHeight="276.0" prefWidth="336.0" style="-fx-border-color: #19647E; -fx-border-width: 2;">
+                              <TableView fx:id="tableViewUsers" blendMode="DARKEN" layoutX="23.0" layoutY="43.0" prefHeight="276.0" prefWidth="322.0" style="-fx-border-color: #19647E; -fx-border-width: 2;">
                                  <columns>
-                                    <TableColumn fx:id="tableColumnNameSuggestions" prefWidth="204.00001525878906" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="Suggestions" />
-                                    <TableColumn fx:id="tableColumnButtons" prefWidth="129.5999755859375" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" />
+                                    <TableColumn fx:id="tableColumnNameSuggestions" prefWidth="176.80007934570312" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="Suggestions" />
+                                    <TableColumn fx:id="tableColumnButtons" prefWidth="141.59999694824216" sortable="false" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8; -fx-alignment: CENTER_RIGHT;" />
                                  </columns>
                                  <effect>
                                     <Blend mode="BLUE" />

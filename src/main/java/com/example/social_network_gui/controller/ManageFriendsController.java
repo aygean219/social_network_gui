@@ -74,7 +74,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     public void setService(NetworkService service, FriendshipService friendshipService, UserService userService) {
         this.networkService = service;
-        this.networkService.addObserver(this);
+        //this.networkService.addObserver(this);
         this.friendshipService = friendshipService;
         this.userService = userService;
 
@@ -151,6 +151,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         }
         observableList.setAll(requestUserDTOS());
         friends.setAll(networkService.getFriendsOfLoggeduser());
+        users.setAll(networkService.getSuggestionsForLoggeduser());
     }
 
     public void reject_request(MouseEvent mouseEvent) {
@@ -239,6 +240,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                             if (text.equals("ADD FRIEND")) {
                                 networkService.sendFriendRequest(getTableView().getItems().get(getIndex()).getId().toString());
                                 updateItem(null, false);
+                                observableList.setAll(requestUserDTOS());
                             } else {
                                 networkService.deleteRequest(new FriendRequest(new Tuple<>(networkService.getLoggedUser(),
                                         getTableView().getItems().get(getIndex())), Status.PENDING));
@@ -259,10 +261,10 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                                         getTableView().getItems().get(getIndex())));
                                 if (request.isPresent()) {
                                     btn.setText("CANCEL REQUEST");
-                                    btn.setStyle("-fx-background-color: #EE964BFF; -fx-border-color: black;-fx-border-width: 0 1 1 0;");
+                                    btn.setStyle("-fx-background-color: #EE964BFF; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
                                 } else {
                                     btn.setText("ADD FRIEND");
-                                    btn.setStyle("-fx-background-color: #28AFB0FF; -fx-border-color: black;-fx-border-width: 0 1 1 0;");
+                                    btn.setStyle("-fx-background-color: #28AFB0FF; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
                                 }
                             }
                             setGraphic(btn);
