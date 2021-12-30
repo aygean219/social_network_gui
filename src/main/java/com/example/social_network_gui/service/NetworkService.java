@@ -5,6 +5,10 @@ import com.example.social_network_gui.repository.Repository;
 import com.example.social_network_gui.repository.memory.RepositoryException;
 import com.example.social_network_gui.utils.Graph;
 import com.example.social_network_gui.utils.Status;
+import com.example.social_network_gui.utils.events.ChangeEventType;
+import com.example.social_network_gui.utils.events.RequestsChangeEvent;
+import com.example.social_network_gui.utils.observer.Observable;
+import com.example.social_network_gui.utils.observer.Observer;
 import com.example.social_network_gui.validators.FriendshipValidator;
 import com.example.social_network_gui.validators.ValidationException;
 
@@ -16,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class NetworkService {
+public class NetworkService implements Observable<RequestsChangeEvent> {
     private final Repository<Tuple<User, User>, Friendship> repo;
     private final Repository<Long, User> repoUser;
     private final Repository<Tuple<User, User>, FriendRequest> repoRequests;
@@ -250,7 +254,9 @@ public class NetworkService {
 //                throw new RepositoryException("You have a friend request from " + user.getFirstName() + " " + user.getLastName());
 //            if (repoRequests.findOne(new Tuple<>(loggedUser, user)).isPresent())
 //                throw new RepositoryException("You have already sent a friend request to " + user.getFirstName() + " " + user.getLastName());
-            repoRequests.save(new FriendRequest(new Tuple<>(loggedUser, user), Status.PENDING));
+            FriendRequest newRequest = new FriendRequest(new Tuple<>(loggedUser, user), Status.PENDING);
+            repoRequests.save(newRequest);
+            notifyObservers(new RequestsChangeEvent(ChangeEventType.ADD, newRequest));
         } else {
             throw new ValidationException("Id does not exist!");
         }
@@ -274,8 +280,11 @@ public class NetworkService {
         Optional<User> user1 = repoUser.findOne(first);
         if (user1.isPresent()) {
             user = user1.get();
-            repoRequests.update(new FriendRequest(new Tuple<>(user, loggedUser), Status.APPROVED));
+            FriendRequest oldRequest = new FriendRequest(new Tuple<>(user, loggedUser), Status.PENDING);
+            FriendRequest newRequest = new FriendRequest(new Tuple<>(user, loggedUser), Status.APPROVED);
+            repoRequests.update(newRequest);
             repo.save(new Friendship(new Tuple<>(loggedUser, user), new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+            notifyObservers(new RequestsChangeEvent(ChangeEventType.UPDATE, newRequest, oldRequest));
         } else {
             throw new ValidationException("You do not have a friend request from user with id " + id + "!");
         }
@@ -288,7 +297,10 @@ public class NetworkService {
         Optional<User> user1 = repoUser.findOne(first);
         if (user1.isPresent()) {
             user = user1.get();
-            repoRequests.update(new FriendRequest(new Tuple<>(user, loggedUser), Status.REJECTED));
+            FriendRequest oldRequest = new FriendRequest(new Tuple<>(user, loggedUser), Status.PENDING);
+            FriendRequest newRequest = new FriendRequest(new Tuple<>(user, loggedUser), Status.REJECTED);
+            repoRequests.update(newRequest);
+            notifyObservers(new RequestsChangeEvent(ChangeEventType.UPDATE, newRequest, oldRequest));
         } else {
             throw new ValidationException("You do not have a friend request from user with id " + id + "!");
         }
@@ -423,7 +435,25 @@ public class NetworkService {
         return suggestions;
     }
 
-    public void deleteRequest(Tuple<User, User> id) {
-        repoRequests.delete(id);
+    public void deleteRequest(FriendRequest request) {
+        repoRequests.delete(request.getId());
+        notifyObservers(new RequestsChangeEvent(ChangeEventType.DELETE, request));
+    }
+
+    private List<Observer<RequestsChangeEvent>> observers = new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer<RequestsChangeEvent> e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer<RequestsChangeEvent> e) {
+        observers.remove(e);
+    }
+
+    @Override
+    public void notifyObservers(RequestsChangeEvent t) {
+        observers.stream().forEach(x -> x.update(t));
     }
 }

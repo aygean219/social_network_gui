@@ -9,6 +9,8 @@ import com.example.social_network_gui.service.FriendshipService;
 import com.example.social_network_gui.service.NetworkService;
 import com.example.social_network_gui.service.UserService;
 import com.example.social_network_gui.utils.Status;
+import com.example.social_network_gui.utils.events.RequestsChangeEvent;
+import com.example.social_network_gui.utils.observer.Observer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,7 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class ManageFriendsController {
+public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @FXML
     private Label nameLabel;
     @FXML
@@ -69,10 +71,11 @@ public class ManageFriendsController {
 
     public void setService(NetworkService service, FriendshipService friendshipService, UserService userService) {
         this.networkService = service;
+        this.networkService.addObserver(this);
         this.friendshipService = friendshipService;
         this.userService = userService;
-        friends.setAll(networkService.getFriendsOfLoggeduser());
-        users.setAll(networkService.getSuggestionsForLoggeduser());
+
+        init();
 
         nameLabel.setText(networkService.getLoggedUser().getFirstName() + " " + networkService.getLoggedUser().getLastName());
         birthdateLabel.setText(networkService.getLoggedUser().getDate());
@@ -81,8 +84,16 @@ public class ManageFriendsController {
             case "M" -> genderLabel.setText("Male");
             default -> genderLabel.setText("Other");
         }
-        observableList.setAll(requestUserDTOS());
+
         emailLabel.setText(networkService.getLoggedUser().getEmail());
+    }
+
+    private void init() {
+        friends.setAll(networkService.getFriendsOfLoggeduser());
+        users.setAll(networkService.getSuggestionsForLoggeduser());
+        observableList.setAll(requestUserDTOS());
+
+
     }
 
     @FXML
@@ -198,5 +209,10 @@ public class ManageFriendsController {
         dialogStage.show();
         Stage stage = (Stage) removeButton.getScene().getWindow();
         stage.close();
+    }
+
+    @Override
+    public void update(RequestsChangeEvent requestsChangeEvent) {
+        init();
     }
 }
