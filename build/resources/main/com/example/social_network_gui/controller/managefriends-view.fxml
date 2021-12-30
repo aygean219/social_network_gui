@@ -18,7 +18,7 @@
         <tabs>
           <Tab style="-fx-background-color: #ddcecd;" text="Account">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #eee5e5;">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="788.0" style="-fx-background-color: #eee5e5;">
                      <children>
                         <Button fx:id="removeButton" alignment="CENTER" layoutX="440.0" layoutY="361.0" mnemonicParsing="false" onAction="#removeFriend" prefHeight="29.0" prefWidth="106.0" style="-fx-background-color: #2c8c99;" text="Remove friend" />
                         <AnchorPane layoutX="21.0" layoutY="26.0" prefHeight="360.0" prefWidth="238.0" style="-fx-background-color: #28afb0; -fx-border-color: #ee964b;">
