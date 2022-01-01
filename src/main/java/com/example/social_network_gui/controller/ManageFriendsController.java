@@ -11,6 +11,7 @@ import com.example.social_network_gui.service.UserService;
 import com.example.social_network_gui.utils.Status;
 import com.example.social_network_gui.utils.events.RequestsChangeEvent;
 import com.example.social_network_gui.utils.observer.Observer;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,11 +24,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -45,9 +48,9 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @FXML
     TableColumn<User, String> tableColumnLastName;
     @FXML
-    TableColumn<User, String> tableColumnFirstName1;
+    TableColumn<User, String> tableColumnNameSuggestions;
     @FXML
-    TableColumn<User, String> tableColumnLastName1;
+    TableColumn<User, Void> tableColumnButtons;
     @FXML
     TableView<User> tableViewFriends;
     @FXML
@@ -71,7 +74,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     public void setService(NetworkService service, FriendshipService friendshipService, UserService userService) {
         this.networkService = service;
-        this.networkService.addObserver(this);
+        //this.networkService.addObserver(this);
         this.friendshipService = friendshipService;
         this.userService = userService;
 
@@ -100,14 +103,19 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     public void initialize() {
         tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<User, String>("firstName"));
         tableColumnLastName.setCellValueFactory(new PropertyValueFactory<User, String>("lastName"));
-        tableColumnFirstName1.setCellValueFactory(new PropertyValueFactory<User, String>("firstName"));
-        tableColumnLastName1.setCellValueFactory(new PropertyValueFactory<User, String>("lastName"));
+
         tableColumnName.setCellValueFactory(new PropertyValueFactory<RequestUserDTO, String>("name"));
         tableColumnStatus.setCellValueFactory(new PropertyValueFactory<RequestUserDTO, Status>("status"));
+
+        tableColumnNameSuggestions.setCellValueFactory(cellData -> Bindings.createStringBinding(
+                () -> cellData.getValue().getFirstName() + " " + cellData.getValue().getLastName()));
+        tableViewUsers.getColumns().add(tableColumnNameSuggestions);
+        addButtonToTable();
 
         tableViewRequests.setItems(observableList);
         tableViewFriends.setItems(friends);
         tableViewUsers.setItems(users);
+        tableViewUsers.setStyle("-fx-table-cell-border-color: transparent;");
 
 
     }
@@ -143,6 +151,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         }
         observableList.setAll(requestUserDTOS());
         friends.setAll(networkService.getFriendsOfLoggeduser());
+        users.setAll(networkService.getSuggestionsForLoggeduser());
     }
 
     public void reject_request(MouseEvent mouseEvent) {
@@ -214,5 +223,62 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @Override
     public void update(RequestsChangeEvent requestsChangeEvent) {
         init();
+    }
+    private void addButtonToTable() {
+        Callback<TableColumn<User, Void>, TableCell<User, Void>> cellFactory = new Callback<>() {
+            @Override
+            public TableCell<User, Void> call(final TableColumn<User, Void> param) {
+
+                final TableCell<User, Void> cell = new TableCell<User, Void>() {
+
+                    private final Button btn = new Button();
+
+
+                    {
+                        btn.setOnAction((ActionEvent event) -> {
+                            String text = btn.getText();
+                            if (text.equals("ADD FRIEND")) {
+                                networkService.sendFriendRequest(getTableView().getItems().get(getIndex()).getId().toString());
+                                updateItem(null, false);
+                                observableList.setAll(requestUserDTOS());
+                            } else {
+                                networkService.deleteRequest(new FriendRequest(new Tuple<>(networkService.getLoggedUser(),
+                                        getTableView().getItems().get(getIndex())), Status.PENDING));
+                                updateItem(null, false);
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            {
+                                Optional<FriendRequest> request = networkService.findOneRequest(new Tuple<>(networkService.getLoggedUser(),
+                                        getTableView().getItems().get(getIndex())));
+                                if (request.isPresent()) {
+                                    btn.setText("CANCEL REQUEST");
+                                    btn.setStyle("-fx-background-color: #EE964BFF; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
+                                } else {
+                                    btn.setText("ADD FRIEND");
+                                    btn.setStyle("-fx-background-color: #28AFB0FF; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
+                                }
+                            }
+                            setGraphic(btn);
+                        }
+                    }
+                };
+                return cell;
+            }
+        };
+
+        tableColumnButtons.setCellFactory(cellFactory);
+
+        tableViewUsers.getColumns().add(tableColumnButtons);
+
+
     }
 }

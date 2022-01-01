@@ -262,6 +262,10 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
         }
     }
 
+    public Optional<FriendRequest> findOneRequest(Tuple<User, User> req) {
+        return repoRequests.findOne(req);
+    }
+
     public Iterable<FriendRequest> getFriendRequests() {
         Iterable<FriendRequest> requests = repoRequests.findAll();
         if (loggedUser.getId() == 0L)
@@ -426,9 +430,9 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
         all.forEach(u -> {
 
             if (!(u.equals(loggedUser)) && repo.findOne(new Tuple<>(loggedUser, u)).isEmpty()
-                    && repo.findOne(new Tuple<>(u, loggedUser)).isEmpty()
-                    && (repoRequests.findOne(new Tuple<>(loggedUser, u)).isEmpty())
-                    && (repoRequests.findOne(new Tuple<>(u, loggedUser)).isEmpty())) {
+                    && repo.findOne(new Tuple<>(u, loggedUser)).isEmpty()) {
+                //&& (repoRequests.findOne(new Tuple<>(loggedUser, u)).isEmpty())
+                //&& (repoRequests.findOne(new Tuple<>(u, loggedUser)).isEmpty())) {
                 suggestions.add(u);
             }
         });

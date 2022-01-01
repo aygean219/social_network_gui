@@ -28,22 +28,22 @@
                                     <Font name="Arial Rounded MT Bold" size="21.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" layoutX="11.0" layoutY="224.0" prefHeight="22.0" prefWidth="129.0" text="ACCOUNT INFO">
+                              <Label layoutX="11.0" layoutY="224.0" prefHeight="22.0" prefWidth="123.0" style="-fx-border-color: #000000FF; -fx-border-width: 0 2 2 2;" text="ACCOUNT INFO">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="emailLabel" layoutX="16.0" layoutY="246.0" prefHeight="22.0" prefWidth="228.0">
+                              <Label fx:id="emailLabel" layoutX="20.0" layoutY="246.0" prefHeight="22.0" prefWidth="228.0">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="genderLabel" layoutX="15.0" layoutY="269.0" prefHeight="22.0" prefWidth="228.0">
+                              <Label fx:id="genderLabel" layoutX="19.0" layoutY="269.0" prefHeight="22.0" prefWidth="228.0">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="birthdateLabel" layoutX="14.0" layoutY="292.0" prefHeight="22.0" prefWidth="232.0">
+                              <Label fx:id="birthdateLabel" layoutX="18.0" layoutY="292.0" prefHeight="22.0" prefWidth="232.0">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
@@ -75,22 +75,21 @@
                   </AnchorPane>
             </content>
           </Tab>
-          <Tab style="-fx-background-color: #ddcecd;" text="Sugestions">
+          <Tab style="-fx-background-color: #ddcecd;" text="Suggestions">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #eee5e5;">
                      <children>
                         <AnchorPane layoutX="31.0" layoutY="22.0" prefHeight="375.0" prefWidth="513.0">
                            <children>
-                              <Button fx:id="addButton" alignment="CENTER" layoutX="359.0" layoutY="185.0" mnemonicParsing="false" onAction="#addFriend" prefHeight="32.0" prefWidth="83.0" style="-fx-background-color: #2c8c99;" text="Add friend" />
                               <Label alignment="CENTER" layoutY="4.0" prefHeight="38.0" prefWidth="253.0" text="People you may know">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="18.0" />
                                  </font>
                               </Label>
-                              <TableView fx:id="tableViewUsers" blendMode="DARKEN" layoutX="23.0" layoutY="43.0" prefHeight="315.0" prefWidth="286.0" style="-fx-border-color: #19647E; -fx-border-width: 2;">
+                              <TableView fx:id="tableViewUsers" blendMode="DARKEN" layoutX="23.0" layoutY="43.0" prefHeight="276.0" prefWidth="322.0" style="-fx-border-color: #19647E; -fx-border-width: 2;">
                                  <columns>
-                                    <TableColumn fx:id="tableColumnFirstName1" prefWidth="148.0" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="First name" />
-                                    <TableColumn fx:id="tableColumnLastName1" prefWidth="136.80003356933594" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="Last name" />
+                                    <TableColumn fx:id="tableColumnNameSuggestions" prefWidth="176.80007934570312" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="Suggestions" />
+                                    <TableColumn fx:id="tableColumnButtons" prefWidth="141.59999694824216" sortable="false" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8; -fx-alignment: CENTER_RIGHT;" />
                                  </columns>
                                  <effect>
                                     <Blend mode="BLUE" />
