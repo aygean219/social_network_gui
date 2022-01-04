@@ -1,9 +1,6 @@
 package com.example.social_network_gui.controller;
 
-import com.example.social_network_gui.domain.FriendRequest;
-import com.example.social_network_gui.domain.RequestUserDTO;
-import com.example.social_network_gui.domain.Tuple;
-import com.example.social_network_gui.domain.User;
+import com.example.social_network_gui.domain.*;
 import com.example.social_network_gui.repository.memory.RepositoryException;
 import com.example.social_network_gui.service.FriendshipService;
 import com.example.social_network_gui.service.NetworkService;
@@ -15,13 +12,23 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -30,6 +37,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -52,13 +60,35 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @FXML
     TableColumn<User, Void> tableColumnButtons;
     @FXML
+    TableColumn<User, Void> tableColumnButtonMessage;
+    @FXML
     TableView<User> tableViewFriends;
     @FXML
     TableView<User> tableViewUsers;
     @FXML
     Button removeButton;
+    @FXML
+    TabPane tabPane;
 
-    private ObservableList<RequestUserDTO> observableList = FXCollections.observableArrayList();
+    ///
+    private User userTo;
+    private Message messageSelected;
+    @FXML
+    private VBox vBoxMessage;
+    @FXML
+    private ScrollPane scrollPane;
+    @FXML
+    private Button sendMessage;
+    @FXML
+    private Button goBack;
+    @FXML
+    private TextField textMessage;
+    @FXML
+    private Pane replyArea;
+
+    /////
+
+    private ObservableList<RequestUserDTO> requests = FXCollections.observableArrayList();
     @FXML
     public TableColumn<RequestUserDTO, Status> tableColumnStatus;
     @FXML
@@ -74,7 +104,6 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     public void setService(NetworkService service, FriendshipService friendshipService, UserService userService) {
         this.networkService = service;
-        //this.networkService.addObserver(this);
         this.friendshipService = friendshipService;
         this.userService = userService;
 
@@ -91,11 +120,60 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         emailLabel.setText(networkService.getLoggedUser().getEmail());
     }
 
+    public void setUserTo(User to){
+        this.userTo = to;
+        vBoxMessage.getChildren().clear();
+    }
+
+    private void showMessages(){
+        if(this.userTo!=null){
+            for(Message msg: networkService.cronological_message(userTo.getId())){
+                HBox hBox = new HBox();
+                if(msg.getFrom().getId()==networkService.getLoggedUser().getId()){
+                    hBox.setAlignment(Pos.CENTER_RIGHT);//my messages are in right
+                    Text text = new Text(msg.getMessage());
+                    TextFlow textFlow = new TextFlow();
+                    textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;"+ " -fx-background-radius :20px ;");
+                    textFlow.setPadding(new Insets(5,5,5,5));
+                    text.setFill(Color.color(1, 1, 1));
+
+                    textFlow.getChildren().add(text);
+                    hBox.setPadding(new Insets(5));
+                    hBox.getChildren().add(textFlow);
+                    vBoxMessage.getChildren().add(hBox);}
+                else{
+                    hBox.setAlignment(Pos.CENTER_LEFT);
+
+                    Text text=new Text(msg.getMessage());
+                    TextFlow textFlow =new TextFlow();
+                    textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;"+ " -fx-background-radius :20px ;");
+                    textFlow.setPadding(new Insets(5,5,5,5));
+                    text.setFill(Color.color(1, 1, 1));
+                    EventHandler<MouseEvent> mouseEventHandler
+                            = e ->{ messageSelected=msg;
+                        textFlow.setStyle(" -fx-background-color: #53A2BE;"+ " -fx-background-radius :20px ;"+"-fx-border-color:  #0A2239;"+"-fx-border-radius: 20px");
+                    };
+                    textFlow.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandler);//
+
+                    EventHandler<MouseEvent> mouseEventHandler2
+                            = e ->{
+                        textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;"+ " -fx-background-radius :20px ;");
+                    };
+                    sendMessage.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandler2);
+                    hBox.setPadding(new Insets(5));
+                    textFlow.getChildren().add(text);
+                    hBox.getChildren().add(textFlow);
+                    vBoxMessage.getChildren().add(hBox);
+                }
+
+            }
+        }
+    }
     private void init() {
         friends.setAll(networkService.getFriendsOfLoggeduser());
         users.setAll(networkService.getSuggestionsForLoggeduser());
-        observableList.setAll(requestUserDTOS());
-
+        requests.setAll(requestUserDTOS());
+        showMessages();
 
     }
 
@@ -111,14 +189,15 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                 () -> cellData.getValue().getFirstName() + " " + cellData.getValue().getLastName()));
         tableViewUsers.getColumns().add(tableColumnNameSuggestions);
         addButtonToTable();
-
-        tableViewRequests.setItems(observableList);
+        addButtonToTableForMessage();
+        tableViewRequests.setItems(requests);
         tableViewFriends.setItems(friends);
         tableViewUsers.setItems(users);
         tableViewUsers.setStyle("-fx-table-cell-border-color: transparent;");
 
 
     }
+
 
     private ArrayList<RequestUserDTO> requestUserDTOS() {
         Iterable<FriendRequest> friendships = networkService.friendshipIterable();
@@ -149,7 +228,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
             }
         }
-        observableList.setAll(requestUserDTOS());
+        requests.setAll(requestUserDTOS());
         friends.setAll(networkService.getFriendsOfLoggeduser());
         users.setAll(networkService.getSuggestionsForLoggeduser());
     }
@@ -162,7 +241,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                 networkService.rejectFriendRequest(request.getId().getE1().getId().toString());
             }
         }
-        observableList.setAll(requestUserDTOS());
+        requests.setAll(requestUserDTOS());
         users.setAll(networkService.getSuggestionsForLoggeduser());
     }
 
@@ -197,7 +276,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                 System.out.println(e.getMessage());
             }
         }
-        observableList.setAll(requestUserDTOS());
+        requests.setAll(requestUserDTOS());
     }
 
     public void logoutAction(ActionEvent actionEvent) throws IOException {
@@ -240,7 +319,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                             if (text.equals("ADD FRIEND")) {
                                 networkService.sendFriendRequest(getTableView().getItems().get(getIndex()).getId().toString());
                                 updateItem(null, false);
-                                observableList.setAll(requestUserDTOS());
+                                requests.setAll(requestUserDTOS());
                             } else {
                                 networkService.deleteRequest(new FriendRequest(new Tuple<>(networkService.getLoggedUser(),
                                         getTableView().getItems().get(getIndex())), Status.PENDING));
@@ -281,4 +360,69 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
 
     }
+
+    @FXML
+    public void handleSendButton(){
+        String new_message = textMessage.getText();
+        List<Long> userList =new ArrayList<>();
+        userList.add(userTo.getId());
+
+        if(messageSelected!=null){
+            networkService.reply_message(messageSelected.getId(),new_message);
+        }else{
+            networkService.send_message(userList,new_message);
+        }
+        textMessage.clear();
+        HBox hBox =new HBox();
+        hBox.setAlignment(Pos.CENTER_RIGHT);
+
+        Text text=new Text(new_message);
+        TextFlow textFlow =new TextFlow();
+        textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;"+ " -fx-background-radius :20px ;");
+        textFlow.setPadding(new Insets(5,10,5,10));
+        text.setFill(Color.color(1, 1, 1));
+
+        textFlow.getChildren().add(text);
+        hBox.setPadding(new Insets(5));
+        hBox.getChildren().add(textFlow);
+        vBoxMessage.getChildren().add(hBox);
+    }
+    private void addButtonToTableForMessage(){
+        Callback<TableColumn<User, Void>, TableCell<User, Void>> cellFactory = new Callback<>() {
+            @Override
+            public TableCell<User, Void> call(final TableColumn<User, Void> param) {
+
+                final TableCell<User, Void> cell = new TableCell<User, Void>() {
+
+                    private final Button btn = new Button("Send Message");
+
+                    {
+                        btn.setOnAction((ActionEvent event) -> {
+                            User user_data=getTableView().getItems().get(getIndex());
+                            tabPane.getSelectionModel().select(3);
+                            setUserTo(user_data);
+                            showMessages();
+
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(btn);
+                            btn.setStyle("-fx-background-color: #28AFB0FF; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
+                        }
+                    }
+                };
+                return cell;
+            }
+        };
+
+        tableColumnButtonMessage.setCellFactory(cellFactory);
+        tableViewFriends.getColumns().add(tableColumnButtonMessage);
+    }
+
 }
