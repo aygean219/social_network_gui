@@ -224,7 +224,8 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
     }
 
     public FriendRequest getRequest(Tuple<User, User> entity) {
-        return repoRequests.findOne(entity).get();
+        Optional<FriendRequest> request = repoRequests.findOne(entity);
+        return request.orElse(null);
     }
 
     public Iterable<FriendshipDTO> friendsListOfUserByDate(String id, String month) {
