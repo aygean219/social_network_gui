@@ -65,6 +65,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @FXML
     TableView<UserRequestDTO> tableViewUsers;
     @FXML
+    private ListView<User> listOfUsers;
+    @FXML
     Button removeButton;
     @FXML
     TabPane tabPane;
@@ -89,6 +91,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @FXML
     private TextField textMessage;
     @FXML
+    private TextField groupName;
+    @FXML
     private Pane replyArea;
 
     /////
@@ -103,6 +107,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     ObservableList<User> friends = FXCollections.observableArrayList();
     ObservableList<UserRequestDTO> users = FXCollections.observableArrayList();
+    ObservableList<User> chats = FXCollections.observableArrayList();
     ObservableList<Event> suggestedEvents = FXCollections.observableArrayList();
     ObservableList<Event> userEvents = FXCollections.observableArrayList();
 
@@ -136,13 +141,18 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         vBoxMessage.getChildren().clear();
     }
 
-    private void showMessages() {
-        if (this.userTo != null) {
+    private void showMessages(){
+        if(this.userTo!=null){
             for (Message msg : networkService.cronological_message(userTo.getId())) {
                 HBox hBox = new HBox();
                 if (msg.getFrom().getId() == networkService.getLoggedUser().getId()) {
                     hBox.setAlignment(Pos.CENTER_RIGHT);//my messages are in right
-                    Text text = new Text(msg.getMessage());
+                    Text text;
+                    if (msg.getReply() != null) {
+                        text = new Text("Reply to: " + msg.getReply().getMessage() + "\n" + msg.getMessage());
+                    } else {
+                        text = new Text(msg.getMessage());
+                    }
                     TextFlow textFlow = new TextFlow();
                     textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;" + " -fx-background-radius :20px ;");
                     textFlow.setPadding(new Insets(5, 5, 5, 5));
@@ -154,8 +164,21 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                     vBoxMessage.getChildren().add(hBox);
                 } else {
                     hBox.setAlignment(Pos.CENTER_LEFT);
+                    Text text;
+                    if (msg.getTo().getUsers().size() <= 1) {
+                        if (msg.getReply() != null) {
+                            text = new Text("Reply to: " + msg.getReply().getMessage() + "\n" + msg.getMessage());
+                        } else {
+                            text = new Text(msg.getMessage());
+                        }
+                    } else {
+                        if (msg.getReply() != null) {
+                            text = new Text("From " + msg.getTo().getName() + ": \n" + "Reply to: " + msg.getReply().getMessage() + "\n" + msg.getMessage());
+                        } else {
+                            text = new Text("From " + msg.getTo().getName() + ": \n" + msg.getMessage());
+                        }
+                    }
 
-                    Text text = new Text(msg.getMessage());
                     TextFlow textFlow = new TextFlow();
                     textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;" + " -fx-background-radius :20px ;");
                     textFlow.setPadding(new Insets(5, 5, 5, 5));
@@ -180,6 +203,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
             }
         }
+
     }
 
     private void initializeEvents() {
@@ -193,6 +217,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     private void init() {
         friends.setAll(networkService.getFriendsOfLoggeduser());
+        chats.setAll(networkService.getFriendsOfLoggeduser());
         users.setAll(suggestionsForLoggedUser());
         requests.setAll(requestUserDTOS());
         showMessages();
@@ -213,6 +238,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         tableViewUsers.getColumns().add(tableColumnNameSuggestions);
         addButtonToTable();
         addButtonToTableForMessage();
+        listOfUsers.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listOfUsers.setItems(chats);
         tableViewRequests.setItems(requests);
         tableViewFriends.setItems(friends);
         tableViewUsers.setItems(users);
@@ -399,25 +426,46 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     }
 
+    public void sendAll(ActionEvent actionEvent) {
+        ObservableList<User> userObservableList = listOfUsers.getSelectionModel().getSelectedItems();
+        if (userObservableList != null) {
+            try {
+                List<User> list_to = userObservableList.stream().collect(Collectors.toList());
+                String name_of_group = groupName.getText();
+                String new_message = textMessage.getText();
+                List<Long> id_to=new ArrayList<>();
+                for(User u:list_to){
+                    id_to.add(u.getId());
+                }
+                networkService.send_message(id_to,name_of_group,new_message);
+                textMessage.clear();
+                groupName.clear();
+            } catch (RepositoryException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        requests.setAll(requestUserDTOS());
+    }
     @FXML
-    public void handleSendButton() {
+    public void handleSendButton(){
         String new_message = textMessage.getText();
-        List<Long> userList = new ArrayList<>();
-        userList.add(userTo.getId());
+        List<Long> userList =new ArrayList<>();
 
-        if (messageSelected != null) {
-            networkService.reply_message(messageSelected.getId(), new_message);
-        } else {
-            networkService.send_message(userList, new_message);
+
+        if(messageSelected!=null){
+            networkService.reply_message(messageSelected.getId(),new_message);
+        }else{
+            userList.add(userTo.getId());
+            networkService.send_message(userList,userTo.getFirstName()+" "+ userTo.getLastName(),new_message);
         }
         textMessage.clear();
-        HBox hBox = new HBox();
+        HBox hBox =new HBox();
         hBox.setAlignment(Pos.CENTER_RIGHT);
 
-        Text text = new Text(new_message);
-        TextFlow textFlow = new TextFlow();
-        textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;" + " -fx-background-radius :20px ;");
-        textFlow.setPadding(new Insets(5, 10, 5, 10));
+        Text text=new Text(new_message);
+        TextFlow textFlow =new TextFlow();
+        textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;"+ " -fx-background-radius :20px ;");
+        textFlow.setPadding(new Insets(5,10,5,10));
         text.setFill(Color.color(1, 1, 1));
 
         textFlow.getChildren().add(text);

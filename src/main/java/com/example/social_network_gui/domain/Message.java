@@ -6,12 +6,12 @@ import java.util.List;
 
 public class Message extends Entity<Long>{
     private User from;
-    private List<User> to ;
+    private Chat to ;
     private String message;
     private LocalDateTime date;
     private Message reply;
 
-    public Message(User from,List<User> to, String message) {
+    public Message(User from,Chat to, String message) {
         this.from = from;
         this.to = to;
         this.message = message;
@@ -19,7 +19,7 @@ public class Message extends Entity<Long>{
         this.reply = null;
     }
 
-    public Message(User from, List<User> to, String message, Message reply) {
+    public Message(User from, Chat to, String message, Message reply) {
         this.from = from;
         this.to = to;
         this.message = message;
@@ -35,7 +35,7 @@ public class Message extends Entity<Long>{
         return from;
     }
 
-    public List<User> getTo() {
+    public Chat getTo() {
         return to;
     }
 
@@ -57,7 +57,7 @@ public class Message extends Entity<Long>{
     @Override
     public String toString() {
         List<String> list_of_receiving = new ArrayList<>();
-        for(User user: to){
+        for(User user: to.getUsers()){
             list_of_receiving.add(user.getFirstName()+" "+user.getLastName());
         }
         if(reply!=null) {
@@ -69,3 +69,4 @@ public class Message extends Entity<Long>{
         return message;
     }
 }
+
