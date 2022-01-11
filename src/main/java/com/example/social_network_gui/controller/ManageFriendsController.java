@@ -2,8 +2,10 @@ package com.example.social_network_gui.controller;
 
 import com.example.social_network_gui.domain.*;
 import com.example.social_network_gui.repository.memory.RepositoryException;
+import com.example.social_network_gui.service.EventService;
 import com.example.social_network_gui.service.FriendshipService;
 import com.example.social_network_gui.service.NetworkService;
+import com.example.social_network_gui.domain.Event;
 import com.example.social_network_gui.service.UserService;
 import com.example.social_network_gui.utils.Status;
 import com.example.social_network_gui.utils.events.RequestsChangeEvent;
@@ -17,15 +19,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -34,15 +33,15 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.IOException;
-import java.time.LocalDate;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class ManageFriendsController implements Observer<RequestsChangeEvent> {
+
     @FXML
     private Label nameLabel;
     @FXML
@@ -69,6 +68,12 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     Button removeButton;
     @FXML
     TabPane tabPane;
+    @FXML
+    ListView<Event> listViewSuggestedEvents;
+    @FXML
+    ListView<Event> listViewUserEvents;
+    @FXML
+    Button createEventButton;
 
     ///
     private User userTo;
@@ -98,16 +103,22 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     ObservableList<User> friends = FXCollections.observableArrayList();
     ObservableList<UserRequestDTO> users = FXCollections.observableArrayList();
+    ObservableList<Event> suggestedEvents = FXCollections.observableArrayList();
+    ObservableList<Event> userEvents = FXCollections.observableArrayList();
+
     private UserService userService;
     private FriendshipService friendshipService;
     private NetworkService networkService;
+    protected EventService eventService;
 
-    public void setService(NetworkService service, FriendshipService friendshipService, UserService userService) {
+    public void setService(NetworkService service, FriendshipService friendshipService, UserService userService, EventService ev) {
         this.networkService = service;
         this.friendshipService = friendshipService;
         this.userService = userService;
+        this.eventService = ev;
 
         init();
+
 
         nameLabel.setText(networkService.getLoggedUser().getFirstName() + " " + networkService.getLoggedUser().getLastName());
         birthdateLabel.setText(networkService.getLoggedUser().getDate());
@@ -116,7 +127,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
             case "M" -> genderLabel.setText("Male");
             default -> genderLabel.setText("Other");
         }
-
+        initializeEvents();
         emailLabel.setText(networkService.getLoggedUser().getEmail());
     }
 
@@ -171,6 +182,15 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         }
     }
 
+    private void initializeEvents() {
+        suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
+        userEvents.setAll(eventService.getEventsForUser(networkService.getLoggedUser()));
+        listViewSuggestedEvents.setCellFactory(param -> new XCell("Subscribe"));
+        listViewUserEvents.setCellFactory(param -> new XCell("Unsubscribe"));
+
+
+    }
+
     private void init() {
         friends.setAll(networkService.getFriendsOfLoggeduser());
         users.setAll(suggestionsForLoggedUser());
@@ -196,6 +216,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         tableViewRequests.setItems(requests);
         tableViewFriends.setItems(friends);
         tableViewUsers.setItems(users);
+        listViewSuggestedEvents.setItems(suggestedEvents);
+        listViewUserEvents.setItems(userEvents);
         tableViewUsers.setStyle("-fx-table-cell-border-color: transparent;");
 
 
@@ -299,7 +321,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         AnchorPane root = loader.load();
 
         LoginController ctrl = loader.getController();
-        ctrl.setServices(userService, friendshipService, networkService);
+        ctrl.setServices(userService, friendshipService, networkService, eventService);
 
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Social network");
@@ -442,4 +464,72 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         tableViewFriends.getColumns().add(tableColumnButtonMessage);
     }
 
+    public void createNewEvent(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("createvent-view.fxml"));
+            AnchorPane root = loader.load();
+            CreateventView ctrl = loader.getController();
+            ctrl.setService(eventService);
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Create event");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            Scene scene = new Scene(root);
+            dialogStage.setScene(scene);
+            dialogStage.show();
+
+            suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    class XCell extends ListCell<Event> {
+        HBox hbox = new HBox();
+        Label label = new Label("");
+        Pane pane = new Pane();
+        Button button = new Button("");
+
+
+        public XCell(String buttonText) {
+            super();
+            button.setText(buttonText);
+            hbox.setStyle("-fx-alignment: center");
+            hbox.getChildren().addAll(label, pane, button);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+            button.setOnAction(e -> {
+                if (buttonText.equals("Subscribe")) {
+
+                    Event selected = getListView().getItems().get(getIndex());
+                    ManageFriendsController.this.eventService.subscribeUser(selected, ManageFriendsController.this.networkService.getLoggedUser());
+
+                    suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
+                    userEvents.setAll(eventService.getEventsForUser(networkService.getLoggedUser()));
+                    updateItem(selected, false);
+
+                } else {
+                    Event selected = getListView().getItems().get(getIndex());
+                    ManageFriendsController.this.eventService.unsubscribeUser(selected, ManageFriendsController.this.networkService.getLoggedUser());
+
+                    suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
+                    userEvents.setAll(eventService.getEventsForUser(networkService.getLoggedUser()));
+
+                    updateItem(selected, false);
+                }
+            });
+
+        }
+
+        @Override
+        protected void updateItem(Event item, boolean empty) {
+            super.updateItem(item, empty);
+            setText(null);
+            if (empty) {
+                setGraphic(null);
+            } else {
+                label.setText(item != null ? item.toString() : "<null>");
+                setGraphic(hbox);
+            }
+        }
+    }
 }

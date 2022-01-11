@@ -1,0 +1,38 @@
+/*.list-cell {*/
+/*    -fx-cell-size: 50;*/
+/*    -fx-animated: true;*/
+/*    -fx-padding: 1px;*/
+/*}*/
+
+/*.list-cell:selected {*/
+/*    -fx-background-color: #ea5800;*/
+/*    -fx-text-fill: white;*/
+/*}*/
+
+/*.list-cell:hover {*/
+/*    -fx-background-color: #efa477;*/
+/*    -fx-cursor: hand;*/
+/*}*/
+
+/*.list-cell:empty {*/
+/*    -fx-opacity: 0;*/
+/*    -fx-cursor: default;*/
+/*}*/
+
+/*.list-cell {*/
+/*    -fx-background-color: #f0ebeb;*/
+/*}*/
+
+/*.list-view {*/
+/*    -fx-background-color: #f0ebeb;*/
+/*}*/
+
+/*#messagesListView {*/
+/*    -fx-font-family: Arial;*/
+/*    -fx-font-size: 14;*/
+/*}*/
+.list-view .list-cell {
+    -fx-background-color: #28AFB0;
+    -fx-text-fill: black;
+    -fx-opacity: 0.8;
+}
