@@ -1,6 +1,7 @@
 package com.example.social_network_gui.controller;
 
 import com.example.social_network_gui.Main;
+import com.example.social_network_gui.service.EventService;
 import com.example.social_network_gui.service.FriendshipService;
 import com.example.social_network_gui.service.NetworkService;
 import com.example.social_network_gui.service.UserService;
@@ -33,16 +34,18 @@ public class LoginController {
     private UserService userService;
     private FriendshipService friendshipService;
     private NetworkService networkService;
+    private EventService eventService;
 
     @FXML
     private void initialize() {
     }
 
 
-    public void setServices(UserService service, FriendshipService friendshipService, NetworkService networkService) {
+    public void setServices(UserService service, FriendshipService friendshipService, NetworkService networkService, EventService ev) {
         this.userService = service;
         this.friendshipService = friendshipService;
         this.networkService = networkService;
+        this.eventService = ev;
 
     }
 
@@ -56,7 +59,7 @@ public class LoginController {
             AnchorPane root = loader.load();
 
             ManageFriendsController ctrl = loader.getController();
-            ctrl.setService(networkService,friendshipService,userService);
+            ctrl.setService(networkService,friendshipService,userService,eventService);
 
 
             Stage dialogStage = new Stage();
@@ -92,7 +95,7 @@ public class LoginController {
             dialogStage.setScene(scene);
 
             SignupController ctrl = loader.getController();
-            ctrl.setServices(networkService,friendshipService,userService);
+            ctrl.setServices(networkService,friendshipService,userService,eventService);
 
             dialogStage.show();
             Stage stage = (Stage) loginButton.getScene().getWindow();

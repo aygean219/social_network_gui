@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -16,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="495.0" prefWidth="684.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.ManageFriendsController">
+<AnchorPane prefHeight="495.0" prefWidth="684.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.ManageFriendsController">
    <children>
       <TabPane fx:id="tabPane" prefHeight="510.0" prefWidth="775.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -24,15 +25,15 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="423.0" prefWidth="695.0" style="-fx-background-color: #eee5e5;">
                      <children>
-                        <Button fx:id="removeButton" alignment="CENTER" layoutX="440.0" layoutY="361.0" mnemonicParsing="false" onAction="#removeFriend" prefHeight="29.0" prefWidth="106.0" style="-fx-background-color: #2c8c99;" text="Remove friend" />
-                        <AnchorPane layoutX="21.0" layoutY="26.0" prefHeight="360.0" prefWidth="238.0" style="-fx-background-color: #28afb0; -fx-border-color: #ee964b;">
+                        <Button fx:id="removeButton" alignment="CENTER" layoutX="477.0" layoutY="241.0" mnemonicParsing="false" onAction="#removeFriend" prefHeight="29.0" prefWidth="106.0" style="-fx-background-color: #2c8c99;" text="Remove friend" />
+                        <AnchorPane layoutX="24.0" layoutY="47.0" prefHeight="360.0" prefWidth="252.0" style="-fx-background-color: #28afb0; -fx-border-color: #ee964b;">
                            <children>
                               <Label fx:id="nameLabel" alignment="CENTER" layoutX="14.0" layoutY="155.0" prefHeight="22.0" prefWidth="222.0">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="21.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="11.0" layoutY="224.0" prefHeight="22.0" prefWidth="123.0" style="-fx-border-color: #000000FF; -fx-border-width: 0 2 2 2;" text="ACCOUNT INFO">
+                              <Label layoutX="11.0" layoutY="224.0" prefHeight="22.0" prefWidth="123.0" style="-fx-border-color: #000000FF;" text="ACCOUNT INFO">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="15.0" />
                                  </font>
@@ -60,7 +61,7 @@
                               <Button fx:id="logoutButton" layoutX="2.0" layoutY="328.0" mnemonicParsing="false" onAction="#logoutAction" prefHeight="34.0" prefWidth="246.0" style="-fx-background-color: #ee964b;" text="Log out" />
                            </children>
                         </AnchorPane>
-                        <TableView fx:id="tableViewFriends" blendMode="DARKEN" layoutX="339.0" layoutY="69.0" prefHeight="263.0" prefWidth="403.0">
+                        <TableView fx:id="tableViewFriends" blendMode="DARKEN" layoutX="329.0" layoutY="32.0" prefHeight="189.0" prefWidth="403.0">
                           <style>-fx-border-color: #19647E; -fx-border-width: 2;</style>
                             <columns>
                             <TableColumn fx:id="tableColumnFirstName" prefWidth="105.60003662109375" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="First name" />
@@ -71,9 +72,15 @@
                               <Blend mode="BLUE" />
                            </effect>
                         </TableView>
-                        <Label alignment="CENTER" layoutX="412.0" layoutY="14.0" prefHeight="38.0" prefWidth="134.0" text="All friends">
+                        <Label alignment="CENTER" layoutX="313.0" layoutY="-6.0" prefHeight="38.0" prefWidth="134.0" text="All friends">
                            <font>
                               <Font name="Arial Rounded MT Bold" size="20.0" />
+                           </font>
+                        </Label>
+                        <ListView fx:id="listViewUserEvents" layoutX="330.0" layoutY="309.0" prefHeight="143.0" prefWidth="408.0" style="-fx-background-color: #eee5e5; -fx-border-color: #19647E; -fx-border-width: 2;" stylesheets="@../css/ListViewStyle.css" />
+                        <Label alignment="CENTER" layoutX="303.0" layoutY="271.0" prefHeight="38.0" prefWidth="146.0" text="Events">
+                           <font>
+                              <Font name="Arial Rounded MT Bold" size="18.0" />
                            </font>
                         </Label>
                      </children>
@@ -84,7 +91,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #eee5e5;">
                      <children>
-                        <AnchorPane layoutX="31.0" layoutY="22.0" prefHeight="375.0" prefWidth="513.0">
+                        <AnchorPane layoutX="31.0" layoutY="22.0" prefHeight="445.0" prefWidth="722.0">
                            <children>
                               <Label alignment="CENTER" layoutY="4.0" prefHeight="38.0" prefWidth="253.0" text="People you may know">
                                  <font>
@@ -100,6 +107,13 @@
                                     <Blend mode="BLUE" />
                                  </effect>
                               </TableView>
+                              <ListView fx:id="listViewSuggestedEvents" layoutX="367.0" layoutY="43.0" prefHeight="279.0" prefWidth="338.0" style="-fx-background-color: #eee5e5; -fx-border-color: #19647E; -fx-border-width: 2;" stylesheets="@../css/ListViewStyle.css" />
+                              <Label alignment="CENTER" layoutX="333.0" layoutY="4.0" prefHeight="38.0" prefWidth="146.0" text="Events">
+                                 <font>
+                                    <Font name="Arial Rounded MT Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="createEventButton" layoutX="474.0" layoutY="378.0" mnemonicParsing="false" onMouseClicked="#reject_request" prefHeight="32.0" prefWidth="233.0" style="-fx-background-color: #2c8c99;" text="Create new event" onAction="#createNewEvent" />
                            </children>
                         </AnchorPane>
                      </children></AnchorPane>

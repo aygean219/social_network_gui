@@ -1,5 +1,6 @@
 package com.example.social_network_gui.controller;
 
+import com.example.social_network_gui.service.EventService;
 import com.example.social_network_gui.service.FriendshipService;
 import com.example.social_network_gui.service.NetworkService;
 import com.example.social_network_gui.service.UserService;
@@ -39,11 +40,13 @@ public class SignupController {
     private NetworkService networkService;
     private FriendshipService friendshipService;
     private UserService userService;
+    private EventService eventService;
 
-    public void setServices(NetworkService networkService, FriendshipService friendshipService,UserService userService) {
+    public void setServices(NetworkService networkService, FriendshipService friendshipService,UserService userService,EventService eventService) {
         this.networkService = networkService;
         this.friendshipService = friendshipService;
         this.userService = userService;
+        this.eventService = eventService;
 
     }
 
@@ -69,7 +72,7 @@ public class SignupController {
             AnchorPane root = loader.load();
 
             ManageFriendsController ctrl = loader.getController();
-            ctrl.setService(networkService, friendshipService,userService);
+            ctrl.setService(networkService, friendshipService,userService,eventService);
 
 
             Stage dialogStage = new Stage();
