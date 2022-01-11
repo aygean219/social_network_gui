@@ -1,5 +1,6 @@
 package com.example.social_network_gui.repository;
 
+import com.example.social_network_gui.domain.Chat;
 import com.example.social_network_gui.domain.Entity;
 import com.example.social_network_gui.domain.User;
 import com.example.social_network_gui.validators.ValidationException;
@@ -60,5 +61,11 @@ public interface Repository<ID, E extends Entity<ID>> {
     default ArrayList<E> findRoles(User user){
         throw new UnsupportedOperationException();
     }
+    default ArrayList<E> findMessages(Long id1,Long id2){
+        throw new UnsupportedOperationException();
+    }
 
+    default ArrayList<Chat> findChats(Long id){
+        throw new UnsupportedOperationException();
+    }
 }

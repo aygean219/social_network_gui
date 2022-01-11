@@ -311,27 +311,6 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
         }
     }
 
-    public Iterable<Message> getAllMessages() {
-        return messageRepository.findAll();
-    }
-
-    ////////////////////////modifica sa raspunda la ultimul mesaj de la un user////////////////////////////
-    public List<MessageDTO> get_message_for_user_logged() {
-
-        List<MessageDTO> listOfAllMessages = new ArrayList<>();
-        List<Message> lista = messageRepository.findAll();
-        for (Message message : lista) {
-            //if(message.getTo().contains(loggedUser) && message.getReply() == 0){
-            System.out.println(message);
-            if (message.getTo().contains(loggedUser) && message.getReply() != null) {
-
-
-                listOfAllMessages.add(new MessageDTO(message.getId(), message.getFrom().getFirstName(), message.getMessage()));
-            }
-        }
-        //fa un sort si ia ultimul mesaj de la fiecare user
-        return listOfAllMessages;
-    }
 
     private void checkId() {
         FreeIdMessage = 0L;
@@ -348,7 +327,7 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
             FreeIdMessage++;
     }
 
-    public void send_message(List<Long> receivers, String message) {
+    public void send_message(List<Long> receivers,String name_chat, String message) {
         User sender = loggedUser;
         List<User> list_of_receivers = new ArrayList<>();
         for (Long receiver : receivers) {
@@ -362,7 +341,8 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
                 list_of_receivers.add(user);
             }
         }
-        Message message1 = new Message(sender, list_of_receivers, message);
+        Chat chat= new Chat(name_chat,list_of_receivers);
+        Message message1 = new Message(sender,chat, message);
         checkId();
         message1.setId(FreeIdMessage);
         messageRepository.save(message1);
@@ -375,12 +355,22 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
         if (message0.getFrom().getId() == null) {
             throw new ValidationException("You cannot reply to the admin!");
         }
-        List<User> list_of_messages = new ArrayList<>();
+        List<User> list_to = new ArrayList<>();
         if (messageRepository.findOne(id_message).isPresent()) {
             User user = messageRepository.findOne(id_message).get().getFrom();
-            list_of_messages.add(user);
+            list_to.add(user);
         }
-        Message replyMessage = new Message(replier, list_of_messages, message, message0);
+        for(User U:messageRepository.findOne(id_message).get().getTo().getUsers()){
+            if(!U.getId().equals(loggedUser.getId())){
+                list_to.add(U);
+            }
+        }
+        for(User u: list_to){
+            System.out.println(u+"\n");
+        }
+        Chat chat=new Chat(message0.getTo().getName(),list_to);
+        Message replyMessage = new Message(replier, chat, message, message0);
+
         checkId();
         //message0.setReply(replyMessage);
         replyMessage.setId(FreeIdMessage);
@@ -390,15 +380,7 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
 
     public List<Message> cronological_message(Long id1) {
         Long id2 = loggedUser.getId();
-        List<Message> mesaje = new ArrayList<>();
-        messageRepository.findAll().forEach(x -> {
-            if ((x.getFrom().getId() == id1 && x.getTo().contains(repoUser.findOne(id2).get())) || (x.getFrom().getId() == id2 && x.getTo().contains(repoUser.findOne(id1).get())))
-                mesaje.add(x);
-        });
-        if (mesaje.size() == 0) {
-            throw new ValidationException("There is no messages between you and that user");
-        }
-        return mesaje.stream().sorted((m1, m2) -> m1.getDate().compareTo(m2.getDate())).collect(Collectors.toList());
+        return messageRepository.findMessages(id2,id1);
     }
 
     public List<User> other_users(Long id) {
@@ -422,7 +404,13 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
                     return user;
                 }).collect(Collectors.toList());
     }
+    public List<Chat> getChatsOfLoggedUser(){
+        for(Chat c: messageRepository.findChats(loggedUser.getId())){
+            System.out.println(c);
+        }
+        return messageRepository.findChats(loggedUser.getId());
 
+    }
     public List<User> getSuggestionsForLoggeduser() {
         Iterable<User> all = repoUser.findAll();
         Iterable<FriendRequest> requests = repoRequests.findAll();
