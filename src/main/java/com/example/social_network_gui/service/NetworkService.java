@@ -12,13 +12,27 @@ import com.example.social_network_gui.utils.observer.Observer;
 import com.example.social_network_gui.validators.FriendshipValidator;
 import com.example.social_network_gui.validators.ValidationException;
 
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1CFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class NetworkService implements Observable<RequestsChangeEvent> {
     private final Repository<Tuple<User, User>, Friendship> repo;
@@ -428,6 +442,68 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
         return suggestions;
     }
 
+    public void saveRaportToPDF(String path, String nameOfFile, LocalDate startDate, LocalDate endDate){
+      if(!nameOfFile.equals("")&&!path.equals("")){
+          PDDocument document =new PDDocument();
+          Path pathToFile= Paths.get(path,nameOfFile);
+          try{
+              Iterable<User> friendships=getFriendshipsActivityReport(startDate,endDate);
+              //Iterable<Message> messages= getMessagesActivityReport(startDate,endDate);
+              PDPage page1 = new PDPage();
+              //PDPage page2 = new PDPage();
+              document.addPage(page1);
+              //document.addPage(page2);
+              PDPageContentStream contentStream = new PDPageContentStream(document, page1);
+              contentStream.setFont(PDType1Font.TIMES_ROMAN, 16);
+              contentStream.setLeading(14.5f);
+              contentStream.beginText();
+              contentStream.newLineAtOffset(25, 725);
+              for (User user : friendships) {
+                  contentStream.showText(user.toString());
+                  contentStream.newLine();
+              }
+              contentStream.endText();
+              contentStream.close();
+              /*contentStream = new PDPageContentStream(document, page2);
+              contentStream.setFont(PDType1Font.TIMES_ROMAN, 16);
+              contentStream.setLeading(14.5f);
+              contentStream.beginText();
+              contentStream.newLineAtOffset(25, 725);
+              for (Message message : messages) {
+                  contentStream.showText(message.toString());
+                  contentStream.newLine();
+              }
+              contentStream.endText();
+              contentStream.close();*/
+              document.save(pathToFile.toString());
+              document.close();
+          }
+          catch (IOException ex) {
+              ex.printStackTrace();
+          }
+      }
+   }
+
+   private Iterable<User> getFriendshipsActivityReport(LocalDate startDate,LocalDate endDate){
+        Iterable<Friendship> friendships=repo.findAll();
+        return StreamSupport.stream(friendships.spliterator(),false)
+                .filter(friendship -> (((friendship.getId().getE2().equals(loggedUser) || friendship.getId().getE1().equals(loggedUser))&&
+                        (LocalDate.parse(friendship.getDate()).isAfter(startDate)&&
+                                LocalDate.parse(friendship.getDate()).isBefore(endDate)))))
+                .map(friendship -> {
+                    User user;
+                    if (friendship.getId().getE1().equals(loggedUser))
+                        user = friendship.getId().getE2();
+                    else user = friendship.getId().getE1();
+                    return user;
+                }).collect(Collectors.toList());
+   }
+   private Iterable<Message> getMessagesActivityReport(LocalDate startDate,LocalDate endDate){
+        Iterable<Message> allMessages= messageRepository.findAll();
+        return StreamSupport.stream(allMessages.spliterator(),false)
+                .filter(message -> LocalDate.parse(message.getDate().toString()).isAfter(startDate)&&LocalDate.parse(message.getDate().toString()).isBefore(endDate)&&message.getTo().getUsers().contains(loggedUser))
+                .collect(Collectors.toList());
+   }
     public void deleteRequest(FriendRequest request) {
         repoRequests.delete(request.getId());
         notifyObservers(new RequestsChangeEvent(ChangeEventType.DELETE, request));

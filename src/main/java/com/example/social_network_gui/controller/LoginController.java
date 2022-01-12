@@ -69,7 +69,7 @@ public class LoginController {
             dialogStage.setScene(scene);
 
 
-
+            ctrl.setStage(dialogStage);
             dialogStage.show();
             Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.close();
