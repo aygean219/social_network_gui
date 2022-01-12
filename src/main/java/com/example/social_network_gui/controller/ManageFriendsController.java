@@ -98,8 +98,14 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     private TextField groupName;
     @FXML
     private Pane replyArea;
+    @FXML
+    TextField pdfName;
+    private Stage stage;
+    public void setStage(Stage s)
+    {
+        this.stage=s;
+    }
 
-    /////
 
     private ObservableList<RequestUserDTO> requests = FXCollections.observableArrayList();
     @FXML
@@ -516,18 +522,30 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         tableViewFriends.getColumns().add(tableColumnButtonMessage);
     }
 
-    private Stage stage;
-    public void setStage(Stage s)
-    {
-        this.stage=s;
-    }
-    @FXML
-    TextField pdfName;
+
     public void handleSaveReport1(){
         DirectoryChooser directoryChooser= new DirectoryChooser();
         File selectedDirectory= directoryChooser.showDialog(stage);
         networkService.saveRaportToPDF(selectedDirectory.getAbsolutePath(),pdfName.getText()+".pdf",startDate.getValue(),endDate.getValue());
+        pdfName.clear();
+        startDate.getEditor().clear();
+        endDate.getEditor().clear();
+    }
+    public void handleSaveReport2(ActionEvent actionEvent) {
+        User user = tableViewFriends.getSelectionModel().getSelectedItem();
+        if (user != null) {
+            try {
+                DirectoryChooser directoryChooser= new DirectoryChooser();
+                File selectedDirectory= directoryChooser.showDialog(stage);
+                networkService.saveRaportToPDFForUser(selectedDirectory.getAbsolutePath(),pdfName.getText()+".pdf",startDate.getValue(),endDate.getValue(),user);
+                pdfName.clear();
+                startDate.getEditor().clear();
+                endDate.getEditor().clear();
+            } catch (RepositoryException e) {
+                System.out.println(e.getMessage());
+            }
 
+        }
     }
     public void createNewEvent(ActionEvent actionEvent) {
         try {
