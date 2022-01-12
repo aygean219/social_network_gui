@@ -448,11 +448,11 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
           Path pathToFile= Paths.get(path,nameOfFile);
           try{
               Iterable<User> friendships=getFriendshipsActivityReport(startDate,endDate);
-              //Iterable<Message> messages= getMessagesActivityReport(startDate,endDate);
+              Iterable<Message> messages= getMessagesActivityReport(startDate,endDate);
               PDPage page1 = new PDPage();
-              //PDPage page2 = new PDPage();
+              PDPage page2 = new PDPage();
               document.addPage(page1);
-              //document.addPage(page2);
+              document.addPage(page2);
               PDPageContentStream contentStream = new PDPageContentStream(document, page1);
               contentStream.setFont(PDType1Font.TIMES_ROMAN, 16);
               contentStream.setLeading(14.5f);
@@ -464,7 +464,7 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
               }
               contentStream.endText();
               contentStream.close();
-              /*contentStream = new PDPageContentStream(document, page2);
+              contentStream = new PDPageContentStream(document, page2);
               contentStream.setFont(PDType1Font.TIMES_ROMAN, 16);
               contentStream.setLeading(14.5f);
               contentStream.beginText();
@@ -474,7 +474,7 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
                   contentStream.newLine();
               }
               contentStream.endText();
-              contentStream.close();*/
+              contentStream.close();
               document.save(pathToFile.toString());
               document.close();
           }
@@ -483,6 +483,34 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
           }
       }
    }
+
+    public void saveRaportToPDFForUser(String path, String nameOfFile, LocalDate startDate, LocalDate endDate,User user){
+        if(!nameOfFile.equals("")&&!path.equals("")){
+            PDDocument document =new PDDocument();
+            Path pathToFile= Paths.get(path,nameOfFile);
+            try{
+                Iterable<Message> messages= getMessagesActivityReportForUser(startDate,endDate,user);
+                PDPage page1 = new PDPage();
+                document.addPage(page1);
+                PDPageContentStream contentStream = new PDPageContentStream(document, page1);
+                contentStream.setFont(PDType1Font.TIMES_ROMAN, 16);
+                contentStream.setLeading(14.5f);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(25, 725);
+                for (Message message : messages) {
+                    contentStream.showText(message.toString());
+                    contentStream.newLine();
+                }
+                contentStream.endText();
+                contentStream.close();
+                document.save(pathToFile.toString());
+                document.close();
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
    private Iterable<User> getFriendshipsActivityReport(LocalDate startDate,LocalDate endDate){
         Iterable<Friendship> friendships=repo.findAll();
@@ -498,12 +526,12 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
                     return user;
                 }).collect(Collectors.toList());
    }
-   private Iterable<Message> getMessagesActivityReport(LocalDate startDate,LocalDate endDate){
-        Iterable<Message> allMessages= messageRepository.findAll();
-        return StreamSupport.stream(allMessages.spliterator(),false)
-                .filter(message -> LocalDate.parse(message.getDate().toString()).isAfter(startDate)&&LocalDate.parse(message.getDate().toString()).isBefore(endDate)&&message.getTo().getUsers().contains(loggedUser))
-                .collect(Collectors.toList());
-   }
+    private Iterable<Message> getMessagesActivityReport(LocalDate startDate,LocalDate endDate){
+        return messageRepository.findMessagesOfUser(startDate,endDate,loggedUser);
+    }
+    private Iterable<Message> getMessagesActivityReportForUser(LocalDate startDate,LocalDate endDate,User user){
+        return messageRepository.findMessagesFromTo(startDate,endDate,user,loggedUser);
+    }
     public void deleteRequest(FriendRequest request) {
         repoRequests.delete(request.getId());
         notifyObservers(new RequestsChangeEvent(ChangeEventType.DELETE, request));

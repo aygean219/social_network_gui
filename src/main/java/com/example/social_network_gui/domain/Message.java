@@ -56,17 +56,7 @@ public class Message extends Entity<Long>{
     }
     @Override
     public String toString() {
-        List<String> list_of_receiving = new ArrayList<>();
-        for(User user: to.getUsers()){
-            list_of_receiving.add(user.getFirstName()+" "+user.getLastName());
-        }
-        if(reply!=null) {
-            String message = "ID:" + this.getId() + ";From:" + this.from.getFirstName() + " " + this.from.getLastName() + "TO: " + list_of_receiving + "Date:" + this.date + "Message: " + this.message + "ReplyId:" + this.reply.getId();
-        }
-        else{
-            String message = "ID:" + this.getId() + ";From:" + this.from.getFirstName() + " " + this.from.getLastName() + "TO: " + list_of_receiving + "Date:" + this.date + "Message: " + this.message;
-        }
-        return message;
+        return "From:" + this.from.getFirstName() + " " + this.from.getLastName() + " Message: " + this.message + " Date:" + this.date ;
     }
 }
 
