@@ -28,10 +28,12 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.net.URL;
@@ -76,8 +78,10 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     ListView<Event> listViewUserEvents;
     @FXML
     Button createEventButton;
-
-    ///
+    @FXML
+    DatePicker startDate;
+    @FXML
+    DatePicker endDate;
     private User userTo;
     private Message messageSelected;
     @FXML
@@ -512,6 +516,19 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         tableViewFriends.getColumns().add(tableColumnButtonMessage);
     }
 
+    private Stage stage;
+    public void setStage(Stage s)
+    {
+        this.stage=s;
+    }
+    @FXML
+    TextField pdfName;
+    public void handleSaveReport1(){
+        DirectoryChooser directoryChooser= new DirectoryChooser();
+        File selectedDirectory= directoryChooser.showDialog(stage);
+        networkService.saveRaportToPDF(selectedDirectory.getAbsolutePath(),pdfName.getText()+".pdf",startDate.getValue(),endDate.getValue());
+
+    }
     public void createNewEvent(ActionEvent actionEvent) {
         try {
             FXMLLoader loader = new FXMLLoader();

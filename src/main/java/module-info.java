@@ -6,6 +6,7 @@ module com.example.social_network_gui {
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
     requires java.sql;
+    requires org.apache.pdfbox;
 
     opens com.example.social_network_gui to javafx.fxml;
     opens com.example.social_network_gui.controller to javafx.fxml;
