@@ -1,6 +1,7 @@
 package com.example.social_network_gui.controller;
 
 import com.example.social_network_gui.Main;
+import com.example.social_network_gui.domain.Notification;
 import com.example.social_network_gui.service.EventService;
 import com.example.social_network_gui.service.FriendshipService;
 import com.example.social_network_gui.service.NetworkService;
@@ -10,11 +11,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 import java.io.IOException;
 import java.net.URL;
@@ -67,6 +71,7 @@ public class LoginController {
             dialogStage.initModality(Modality.WINDOW_MODAL);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
+
 
 
             ctrl.setStage(dialogStage);

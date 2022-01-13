@@ -8,6 +8,7 @@ module com.example.social_network_gui {
     requires java.sql;
     requires org.apache.pdfbox;
 
+
     opens com.example.social_network_gui to javafx.fxml;
     opens com.example.social_network_gui.controller to javafx.fxml;
     opens com.example.social_network_gui.domain to javafx.fxml;

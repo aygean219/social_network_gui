@@ -23,6 +23,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -32,6 +34,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,6 +97,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @FXML
     private Button goBack;
     @FXML
+    private Button comingEvents;
+    @FXML
     private TextField textMessage;
     @FXML
     private TextField groupName;
@@ -144,6 +150,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         }
         initializeEvents();
         emailLabel.setText(networkService.getLoggedUser().getEmail());
+
+
     }
 
     public void setUserTo(User to) {
@@ -232,6 +240,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         requests.setAll(requestUserDTOS());
         showMessages();
 
+
     }
 
     @FXML
@@ -256,6 +265,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         listViewSuggestedEvents.setItems(suggestedEvents);
         listViewUserEvents.setItems(userEvents);
         tableViewUsers.setStyle("-fx-table-cell-border-color: transparent;");
+
 
 
     }
@@ -456,6 +466,24 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         }
         requests.setAll(requestUserDTOS());
     }
+    @FXML
+    public void handleNotifications() {
+        Iterable<Notification> listOfNotification= eventService.getNotifications(networkService.getLoggedUser());
+        String text="";
+        for(Notification notif:listOfNotification){
+            text=text+"\n"+"For "+notif.getNotification_info().getTitle()+" : "+notif.getRemaining_time();
+        }
+        if(text!=""){
+            Notifications notification=Notifications.create()
+                    .title("The coming events")
+                    .text(text)
+                    .graphic(null)
+                    .hideAfter(Duration.seconds(10))
+                    .position(Pos.CENTER);
+            notification.showWarning();
+        }
+    }
+
     @FXML
     public void handleSendButton(){
         String new_message = textMessage.getText();

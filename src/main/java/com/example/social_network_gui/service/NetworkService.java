@@ -532,6 +532,7 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
     private Iterable<Message> getMessagesActivityReportForUser(LocalDate startDate,LocalDate endDate,User user){
         return messageRepository.findMessagesFromTo(startDate,endDate,user,loggedUser);
     }
+
     public void deleteRequest(FriendRequest request) {
         repoRequests.delete(request.getId());
         notifyObservers(new RequestsChangeEvent(ChangeEventType.DELETE, request));
