@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -47,6 +48,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class ManageFriendsController implements Observer<RequestsChangeEvent> {
+    private static final int pageSize = 5;
 
     @FXML
     private Label nameLabel;
@@ -57,15 +59,9 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @FXML
     private Label emailLabel;
     @FXML
-    TableColumn<User, String> tableColumnFirstName;
-    @FXML
-    TableColumn<User, String> tableColumnLastName;
-    @FXML
     TableColumn<UserRequestDTO, String> tableColumnNameSuggestions;
     @FXML
     TableColumn<UserRequestDTO, Void> tableColumnButtons;
-    @FXML
-    TableColumn<User, Void> tableColumnButtonMessage;
     @FXML
     TableView<User> tableViewFriends;
     @FXML
@@ -86,12 +82,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     DatePicker startDate;
     @FXML
     DatePicker endDate;
-    private User userTo;
-    private Message messageSelected;
     @FXML
     private VBox vBoxMessage;
-    @FXML
-    private ScrollPane scrollPane;
     @FXML
     private Button sendMessage;
     @FXML
@@ -106,20 +98,22 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     private Pane replyArea;
     @FXML
     TextField pdfName;
-    private Stage stage;
-    public void setStage(Stage s)
-    {
-        this.stage=s;
-    }
-
-
-    private ObservableList<RequestUserDTO> requests = FXCollections.observableArrayList();
+    @FXML
+    Pagination friendsPagination;
     @FXML
     public TableColumn<RequestUserDTO, Status> tableColumnStatus;
     @FXML
     public TableColumn<RequestUserDTO, String> tableColumnName;
     @FXML
     public TableView<RequestUserDTO> tableViewRequests;
+
+    private User userTo;
+    private Message messageSelected;
+    private Stage stage;
+
+
+    private ObservableList<RequestUserDTO> requests = FXCollections.observableArrayList();
+
 
     ObservableList<User> friends = FXCollections.observableArrayList();
     ObservableList<UserRequestDTO> users = FXCollections.observableArrayList();
@@ -132,6 +126,10 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     private NetworkService networkService;
     protected EventService eventService;
 
+    public void setStage(Stage s) {
+        this.stage = s;
+    }
+
     public void setService(NetworkService service, FriendshipService friendshipService, UserService userService, EventService ev) {
         this.networkService = service;
         this.friendshipService = friendshipService;
@@ -139,7 +137,6 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         this.eventService = ev;
 
         init();
-
 
         nameLabel.setText(networkService.getLoggedUser().getFirstName() + " " + networkService.getLoggedUser().getLastName());
         birthdateLabel.setText(networkService.getLoggedUser().getDate());
@@ -151,6 +148,20 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         initializeEvents();
         emailLabel.setText(networkService.getLoggedUser().getEmail());
 
+        int numberOfPages = friends.size() / pageSize;
+        if (numberOfPages <= 0) numberOfPages = 1;
+        friendsPagination.setPageCount(numberOfPages);
+        friendsPagination.setPageFactory(this::createPage);
+        friendsPagination.currentPageIndexProperty().addListener((obs, oldIndex, newIndex) ->
+                createPage(newIndex.intValue()));
+    }
+
+    private Node createPage(Integer pageIndex) {
+
+        ArrayList<User> friends = networkService.getFriendsOfLoggedUserOnPage(pageIndex, pageSize, networkService.getLoggedUser().getId());
+
+        tableViewFriends.setItems(FXCollections.observableArrayList(friends));
+        return tableViewFriends;
 
     }
 
@@ -159,8 +170,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         vBoxMessage.getChildren().clear();
     }
 
-    private void showMessages(){
-        if(this.userTo!=null){
+    private void showMessages() {
+        if (this.userTo != null) {
             for (Message msg : networkService.cronological_message(userTo.getId())) {
                 HBox hBox = new HBox();
                 if (msg.getFrom().getId() == networkService.getLoggedUser().getId()) {
@@ -243,10 +254,30 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     }
 
+    private TableView<User> createTableFriends() {
+        TableView<User> friends = new TableView();
+        TableColumn<User, String> tableColumnFirstName = new TableColumn<>();
+        tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        tableColumnFirstName.setPrefWidth(110);
+
+        TableColumn<User, String> tableColumnLastName = new TableColumn<>();
+        tableColumnLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        tableColumnLastName.setPrefWidth(110);
+
+        friends.getColumns().add(tableColumnFirstName);
+        friends.getColumns().add(tableColumnLastName);
+
+        TableColumn<User, Void> tableColumnButtonMessage = new TableColumn<>();
+
+        tableColumnButtonMessage.setCellFactory(addButtonToTableForMessage());
+        tableColumnButtonMessage.setPrefWidth(105);
+
+        friends.getColumns().add(tableColumnButtonMessage);
+        return friends;
+    }
+
     @FXML
     public void initialize() {
-        tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<User, String>("firstName"));
-        tableColumnLastName.setCellValueFactory(new PropertyValueFactory<User, String>("lastName"));
 
         tableColumnName.setCellValueFactory(new PropertyValueFactory<RequestUserDTO, String>("name"));
         tableColumnStatus.setCellValueFactory(new PropertyValueFactory<RequestUserDTO, Status>("status"));
@@ -256,18 +287,17 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
         tableViewUsers.getColumns().add(tableColumnNameSuggestions);
         addButtonToTable();
-        addButtonToTableForMessage();
+
         listOfUsers.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listOfUsers.setItems(chats);
         tableViewRequests.setItems(requests);
-        tableViewFriends.setItems(friends);
+
         tableViewUsers.setItems(users);
         listViewSuggestedEvents.setItems(suggestedEvents);
         listViewUserEvents.setItems(userEvents);
         tableViewUsers.setStyle("-fx-table-cell-border-color: transparent;");
 
-
-
+        tableViewFriends = createTableFriends();
     }
 
 
@@ -325,6 +355,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         requests.setAll(requestUserDTOS());
         friends.setAll(networkService.getFriendsOfLoggeduser());
         users.setAll(suggestionsForLoggedUser());
+        createPage(friendsPagination.getCurrentPageIndex());
     }
 
     public void reject_request(MouseEvent mouseEvent) {
@@ -337,6 +368,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         }
         requests.setAll(requestUserDTOS());
         users.setAll(suggestionsForLoggedUser());
+
     }
 
     public void removeFriend(ActionEvent actionEvent) {
@@ -384,6 +416,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @Override
     public void update(RequestsChangeEvent requestsChangeEvent) {
         init();
+        createPage(friendsPagination.getCurrentPageIndex());
     }
 
     private void addButtonToTable() {
@@ -453,11 +486,11 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                 List<User> list_to = userObservableList.stream().collect(Collectors.toList());
                 String name_of_group = groupName.getText();
                 String new_message = textMessage.getText();
-                List<Long> id_to=new ArrayList<>();
-                for(User u:list_to){
+                List<Long> id_to = new ArrayList<>();
+                for (User u : list_to) {
                     id_to.add(u.getId());
                 }
-                networkService.send_message(id_to,name_of_group,new_message);
+                networkService.send_message(id_to, name_of_group, new_message);
                 textMessage.clear();
                 groupName.clear();
             } catch (RepositoryException e) {
@@ -466,15 +499,16 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         }
         requests.setAll(requestUserDTOS());
     }
+
     @FXML
     public void handleNotifications() {
-        Iterable<Notification> listOfNotification= eventService.getNotifications(networkService.getLoggedUser());
-        String text="";
-        for(Notification notif:listOfNotification){
-            text=text+"\n"+"For "+notif.getNotification_info().getTitle()+" : "+notif.getRemaining_time();
+        Iterable<Notification> listOfNotification = eventService.getNotifications(networkService.getLoggedUser());
+        String text = "";
+        for (Notification notif : listOfNotification) {
+            text = text + "\n" + "For " + notif.getNotification_info().getTitle() + " : " + notif.getRemaining_time();
         }
-        if(text!=""){
-            Notifications notification=Notifications.create()
+        if (text != "") {
+            Notifications notification = Notifications.create()
                     .title("The coming events")
                     .text(text)
                     .graphic(null)
@@ -485,25 +519,25 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     }
 
     @FXML
-    public void handleSendButton(){
+    public void handleSendButton() {
         String new_message = textMessage.getText();
-        List<Long> userList =new ArrayList<>();
+        List<Long> userList = new ArrayList<>();
 
 
-        if(messageSelected!=null){
-            networkService.reply_message(messageSelected.getId(),new_message);
-        }else{
+        if (messageSelected != null) {
+            networkService.reply_message(messageSelected.getId(), new_message);
+        } else {
             userList.add(userTo.getId());
-            networkService.send_message(userList,userTo.getFirstName()+" "+ userTo.getLastName(),new_message);
+            networkService.send_message(userList, userTo.getFirstName() + " " + userTo.getLastName(), new_message);
         }
         textMessage.clear();
-        HBox hBox =new HBox();
+        HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_RIGHT);
 
-        Text text=new Text(new_message);
-        TextFlow textFlow =new TextFlow();
-        textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;"+ " -fx-background-radius :20px ;");
-        textFlow.setPadding(new Insets(5,10,5,10));
+        Text text = new Text(new_message);
+        TextFlow textFlow = new TextFlow();
+        textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;" + " -fx-background-radius :20px ;");
+        textFlow.setPadding(new Insets(5, 10, 5, 10));
         text.setFill(Color.color(1, 1, 1));
 
         textFlow.getChildren().add(text);
@@ -512,8 +546,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         vBoxMessage.getChildren().add(hBox);
     }
 
-    private void addButtonToTableForMessage() {
-        Callback<TableColumn<User, Void>, TableCell<User, Void>> cellFactory = new Callback<>() {
+    private Callback<TableColumn<User, Void>, TableCell<User, Void>> addButtonToTableForMessage() {
+        return new Callback<>() {
             @Override
             public TableCell<User, Void> call(final TableColumn<User, Void> param) {
 
@@ -546,26 +580,25 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
             }
         };
 
-        tableColumnButtonMessage.setCellFactory(cellFactory);
-        tableViewFriends.getColumns().add(tableColumnButtonMessage);
     }
 
 
-    public void handleSaveReport1(){
-        DirectoryChooser directoryChooser= new DirectoryChooser();
-        File selectedDirectory= directoryChooser.showDialog(stage);
-        networkService.saveRaportToPDF(selectedDirectory.getAbsolutePath(),pdfName.getText()+".pdf",startDate.getValue(),endDate.getValue());
+    public void handleSaveReport1() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File selectedDirectory = directoryChooser.showDialog(stage);
+        networkService.saveRaportToPDF(selectedDirectory.getAbsolutePath(), pdfName.getText() + ".pdf", startDate.getValue(), endDate.getValue());
         pdfName.clear();
         startDate.getEditor().clear();
         endDate.getEditor().clear();
     }
+
     public void handleSaveReport2(ActionEvent actionEvent) {
         User user = tableViewFriends.getSelectionModel().getSelectedItem();
         if (user != null) {
             try {
-                DirectoryChooser directoryChooser= new DirectoryChooser();
-                File selectedDirectory= directoryChooser.showDialog(stage);
-                networkService.saveRaportToPDFForUser(selectedDirectory.getAbsolutePath(),pdfName.getText()+".pdf",startDate.getValue(),endDate.getValue(),user);
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                File selectedDirectory = directoryChooser.showDialog(stage);
+                networkService.saveRaportToPDFForUser(selectedDirectory.getAbsolutePath(), pdfName.getText() + ".pdf", startDate.getValue(), endDate.getValue(), user);
                 pdfName.clear();
                 startDate.getEditor().clear();
                 endDate.getEditor().clear();
@@ -575,6 +608,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
         }
     }
+
     public void createNewEvent(ActionEvent actionEvent) {
         try {
             FXMLLoader loader = new FXMLLoader();

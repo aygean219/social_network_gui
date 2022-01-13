@@ -4,6 +4,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -17,7 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="558.0" prefWidth="884.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.ManageFriendsController">
+<AnchorPane prefHeight="558.0" prefWidth="884.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.ManageFriendsController">
    <children>
       <TabPane fx:id="tabPane" prefHeight="566.0" prefWidth="884.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -61,17 +62,17 @@
                               <Button fx:id="logoutButton" layoutX="2.0" layoutY="323.0" mnemonicParsing="false" onAction="#logoutAction" prefHeight="39.0" prefWidth="250.0" style="-fx-background-color: #ee964b;" text="Log out" />
                            </children>
                         </AnchorPane>
-                        <TableView fx:id="tableViewFriends" blendMode="DARKEN" layoutX="256.0" layoutY="130.0" prefHeight="192.0" prefWidth="433.0">
-                          <style>-fx-border-color: #19647E; -fx-border-width: 2;</style>
-                            <columns>
-                            <TableColumn fx:id="tableColumnFirstName" prefWidth="105.60003662109375" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="First name" />
-                            <TableColumn fx:id="tableColumnLastName" prefWidth="152.0" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="Last name" />
-                              <TableColumn fx:id="tableColumnButtonMessage" minWidth="1.0" prefWidth="182.0" sortable="false" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8; -fx-alignment: left;" />
-                          </columns>
-                           <effect>
-                              <Blend mode="BLUE" />
-                           </effect>
-                        </TableView>
+<!--                        <TableView fx:id="tableViewFriends" blendMode="DARKEN" layoutX="256.0" layoutY="130.0" prefHeight="192.0" prefWidth="433.0">-->
+<!--                          <style>-fx-border-color: #19647E; -fx-border-width: 2;</style>-->
+<!--                            <columns>-->
+<!--                            <TableColumn fx:id="tableColumnFirstName" prefWidth="105.60003662109375" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="First name" />-->
+<!--                            <TableColumn fx:id="tableColumnLastName" prefWidth="152.0" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="Last name" />-->
+<!--                              <TableColumn fx:id="tableColumnButtonMessage" minWidth="1.0" prefWidth="182.0" sortable="false" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8; -fx-alignment: left;" />-->
+<!--                          </columns>-->
+<!--                           <effect>-->
+<!--                              <Blend mode="BLUE" />-->
+<!--                           </effect>-->
+<!--                        </TableView>-->
                         <ListView fx:id="listViewUserEvents" layoutX="256.0" layoutY="341.0" prefHeight="149.0" prefWidth="434.0" style="-fx-background-color: #eee5e5; -fx-border-color: #19647E; -fx-border-width: 2;" stylesheets="@../css/ListViewStyle.css" />
                         <Label alignment="CENTER" layoutX="714.0" layoutY="334.0" prefHeight="38.0" prefWidth="146.0" text="Events">
                            <font>
@@ -104,6 +105,7 @@
                            </font>
                         </Label>
                         <Button fx:id="comingEvents" layoutX="704.0" layoutY="396.0" mnemonicParsing="false" onAction="#handleNotifications" prefHeight="39.0" prefWidth="167.0" style="-fx-background-color: #ee964b;" text="Show Coming Events" />
+                        <Pagination fx:id="friendsPagination" layoutX="321.0" layoutY="127.0" prefHeight="200.0" prefWidth="328.0" />
                      </children>
                   </AnchorPane>
             </content>
