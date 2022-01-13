@@ -1,9 +1,6 @@
 package com.example.social_network_gui.repository;
 
-import com.example.social_network_gui.domain.Chat;
-import com.example.social_network_gui.domain.Entity;
-import com.example.social_network_gui.domain.Message;
-import com.example.social_network_gui.domain.User;
+import com.example.social_network_gui.domain.*;
 import com.example.social_network_gui.validators.ValidationException;
 
 import java.time.LocalDate;
@@ -74,6 +71,9 @@ public interface Repository<ID, E extends Entity<ID>> {
         throw new UnsupportedOperationException();
     }
     default ArrayList<Message> findMessagesFromTo(LocalDate startDate,LocalDate endDate,User user,User loggedUser){
+        throw new UnsupportedOperationException();
+    }
+    default ArrayList<Notification> findEvents(User loggedUser){
         throw new UnsupportedOperationException();
     }
 }

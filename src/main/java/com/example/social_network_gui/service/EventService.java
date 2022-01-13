@@ -1,9 +1,6 @@
 package com.example.social_network_gui.service;
 
-import com.example.social_network_gui.domain.Event;
-import com.example.social_network_gui.domain.Friendship;
-import com.example.social_network_gui.domain.Tuple;
-import com.example.social_network_gui.domain.User;
+import com.example.social_network_gui.domain.*;
 import com.example.social_network_gui.repository.Repository;
 import com.example.social_network_gui.repository.database.EventsDatabaseRepository;
 import com.example.social_network_gui.repository.memory.RepositoryException;
@@ -80,6 +77,8 @@ public class EventService {
         event.unsubscribeUser(user);
         ((EventsDatabaseRepository) eventRepository).unsubscribeUser(user, event);
     }
-
+    public List<Notification> getNotifications(User user){
+        return eventRepository.findEvents(user);
+    }
 
 }

@@ -5,7 +5,10 @@ import com.example.social_network_gui.repository.Repository;
 import com.example.social_network_gui.utils.EventSubscription;
 
 import java.sql.*;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
@@ -243,5 +246,54 @@ public class EventsDatabaseRepository implements Repository<Long, Event> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    public ArrayList<Notification> findEvents(User loggedUser){
+        ArrayList<Notification> notifications = new ArrayList<>();
+        String query="SELECT events.id,events.title,events.description,events.location,events.date FROM events " +
+                "INNER JOIN events_subscriptions ON events_subscriptions.event_id=events.id " +
+                "WHERE events_subscriptions.user_id = ? AND events_subscriptions.subscription_status='SUBSCRIBE'";
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setLong(1,loggedUser.getId());
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                String location = resultSet.getString("location");
+                LocalDateTime date = LocalDateTime.parse(resultSet.getString("date"));
+                Event event = new Event(title, description, location, date);
+                event.setId(id);
+
+                String query2 = "SELECT * FROM userr INNER JOIN events_subscriptions ON events_subscriptions.user_id = userr.id AND events_subscriptions.event_id = ?";
+                PreparedStatement statement1 = connection.prepareStatement(query2);
+                statement1.setLong(1, event.getId());
+                ResultSet resultSet2 = statement1.executeQuery();
+
+                while (resultSet2.next()) {
+                    User user = new User(resultSet2.getString("first_name"), resultSet2.getString("last_name"),
+                            resultSet2.getString("date"), resultSet2.getString("gender"),
+                            resultSet2.getString("email"), resultSet2.getString("password"));
+                    user.setId(resultSet2.getLong("id"));
+
+                    if ("SUBSCRIBE".equals(resultSet2.getString("subscription_status"))) {
+                        event.addUser(user, EventSubscription.SUBSCRIBE);
+                    }
+                    else{
+                        event.addUser(user, EventSubscription.UNSUBSCRIBE);}
+
+                }
+                Instant now = Instant.now();
+                Duration diff = Duration.between(now, date.toInstant(ZoneOffset.UTC));
+                String time="Hours left "+diff.toHours();
+                Notification notification=new Notification(loggedUser,event,time);
+                notifications.add(notification);
+            }
+            return notifications;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return notifications;
     }
 }
