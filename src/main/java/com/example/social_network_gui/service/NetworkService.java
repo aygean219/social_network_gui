@@ -418,6 +418,18 @@ public class NetworkService implements Observable<RequestsChangeEvent> {
                     return user;
                 }).collect(Collectors.toList());
     }
+
+    public ArrayList<User> getFriendsOfLoggedUserOnPage(int pageIndex, int pageSize, Long userId){
+        Iterable<Friendship> all = repo.findPage(pageIndex,pageSize,userId);
+        ArrayList<User> friends =new ArrayList<>();
+        for (Friendship fr : all){
+            if(fr.getId().getE2().equals(loggedUser))
+                friends.add(fr.getId().getE1());
+            else
+                friends.add(fr.getId().getE2());
+        }
+        return friends;
+    }
     public List<Chat> getChatsOfLoggedUser(){
         for(Chat c: messageRepository.findChats(loggedUser.getId())){
             System.out.println(c);

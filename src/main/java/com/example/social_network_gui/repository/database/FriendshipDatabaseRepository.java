@@ -4,15 +4,18 @@ import com.example.social_network_gui.domain.Friendship;
 import com.example.social_network_gui.domain.Tuple;
 import com.example.social_network_gui.domain.User;
 import com.example.social_network_gui.repository.Repository;
+
 import java.sql.*;
+
 import com.example.social_network_gui.repository.memory.RepositoryException;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import java.util.Optional;
 
-public class FriendshipDatabaseRepository implements Repository<Tuple<User,User>, Friendship> {
+public class FriendshipDatabaseRepository implements Repository<Tuple<User, User>, Friendship> {
 
     private final String url;
     private final String username;
@@ -28,7 +31,7 @@ public class FriendshipDatabaseRepository implements Repository<Tuple<User,User>
 
     @Override
     public Optional<Friendship> findOne(Tuple<User, User> entity) {
-        String quarry="SELECT * FROM friendship WHERE id1="+entity.getE2().getId()+" AND id2="+entity.getE1().getId()+";";
+        String quarry = "SELECT * FROM friendship WHERE id1=" + entity.getE2().getId() + " AND id2=" + entity.getE1().getId() + ";";
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(quarry);
              ResultSet resultSet = statement.executeQuery()) {
@@ -36,30 +39,30 @@ public class FriendshipDatabaseRepository implements Repository<Tuple<User,User>
             Long id1;
             Long id2;
             Optional<Friendship> f = Optional.empty();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 id1 = Long.parseLong(resultSet.getString("id1"));
                 id2 = Long.parseLong(resultSet.getString("id2"));
                 String date = resultSet.getString(3);
 
                 String sql = "SELECT * FROM userr WHERE id = ?";
                 PreparedStatement statement1 = connection.prepareStatement(sql);
-                statement1.setLong(1,id1);
+                statement1.setLong(1, id1);
                 ResultSet resultSet1 = statement1.executeQuery();
                 resultSet1.next();
-                User user1 = new User(resultSet1.getString("first_name"),resultSet1.getString("last_name"),resultSet1.getString("date"),resultSet1.getString("gender"),resultSet1.getString("email"),resultSet1.getString("password"));
+                User user1 = new User(resultSet1.getString("first_name"), resultSet1.getString("last_name"), resultSet1.getString("date"), resultSet1.getString("gender"), resultSet1.getString("email"), resultSet1.getString("password"));
 
                 user1.setId(resultSet1.getLong("id"));
 
                 String sql2 = "SELECT * FROM userr WHERE id = ?";
                 PreparedStatement statement2 = connection.prepareStatement(sql2);
-                statement2.setLong(1,id2);
+                statement2.setLong(1, id2);
                 ResultSet resultSet2 = statement2.executeQuery();
                 resultSet2.next();
-                User user2 = new User(resultSet2.getString("first_name"),resultSet2.getString("last_name"),resultSet2.getString("date"),resultSet2.getString("gender"),resultSet2.getString("email"),resultSet2.getString("password"));
+                User user2 = new User(resultSet2.getString("first_name"), resultSet2.getString("last_name"), resultSet2.getString("date"), resultSet2.getString("gender"), resultSet2.getString("email"), resultSet2.getString("password"));
                 user2.setId(resultSet2.getLong("id"));
 
-                Tuple<User,User> t = new Tuple<>(user1,user2);
-                f = Optional.of(new Friendship(t,date));
+                Tuple<User, User> t = new Tuple<>(user1, user2);
+                f = Optional.of(new Friendship(t, date));
             }
             return f;
         } catch (SQLException e) {
@@ -82,23 +85,23 @@ public class FriendshipDatabaseRepository implements Repository<Tuple<User,User>
 
                 String sql = "SELECT * FROM userr WHERE id = ?";
                 PreparedStatement statement1 = connection.prepareStatement(sql);
-                statement1.setLong(1,id1);
+                statement1.setLong(1, id1);
                 ResultSet resultSet1 = statement1.executeQuery();
                 resultSet1.next();
-                User user1 = new User(resultSet1.getString("first_name"),resultSet1.getString("last_name"),resultSet1.getString("date"),resultSet1.getString("gender"),resultSet1.getString("email"),resultSet1.getString("password"));
+                User user1 = new User(resultSet1.getString("first_name"), resultSet1.getString("last_name"), resultSet1.getString("date"), resultSet1.getString("gender"), resultSet1.getString("email"), resultSet1.getString("password"));
                 user1.setId(resultSet1.getLong("id"));
 
                 String sql2 = "SELECT * FROM userr WHERE id = ?";
                 PreparedStatement statement2 = connection.prepareStatement(sql2);
-                statement2.setLong(1,id2);
+                statement2.setLong(1, id2);
                 ResultSet resultSet2 = statement2.executeQuery();
                 resultSet2.next();
-                User user2 = new User(resultSet2.getString("first_name"),resultSet2.getString("last_name"),resultSet2.getString("date"),resultSet2.getString("gender"),resultSet2.getString("email"),resultSet2.getString("password"));
+                User user2 = new User(resultSet2.getString("first_name"), resultSet2.getString("last_name"), resultSet2.getString("date"), resultSet2.getString("gender"), resultSet2.getString("email"), resultSet2.getString("password"));
                 user2.setId(resultSet2.getLong("id"));
 
-                Tuple<User,User> t = new Tuple<>(user1,user2);
+                Tuple<User, User> t = new Tuple<>(user1, user2);
 
-                Friendship friendship = new Friendship(t,date);
+                Friendship friendship = new Friendship(t, date);
                 friendships.add(friendship);
             }
             return friendships;
@@ -123,9 +126,9 @@ public class FriendshipDatabaseRepository implements Repository<Tuple<User,User>
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String querry = "INSERT INTO friendship VALUES('"+entity.getId().getE2().getId()+"','"
-                +entity.getId().getE1().getId()+"','"
-                +LocalDateTime.now().format(formatter)+"')";
+        String querry = "INSERT INTO friendship VALUES('" + entity.getId().getE2().getId() + "','"
+                + entity.getId().getE1().getId() + "','"
+                + LocalDateTime.now().format(formatter) + "')";
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(querry)) {
             statement.execute();
@@ -148,8 +151,8 @@ public class FriendshipDatabaseRepository implements Repository<Tuple<User,User>
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        String querry = "DELETE FROM friendship WHERE id1="+entity.getE2().getId()+" and id2="
-                +entity.getE1().getId()+";";
+        String querry = "DELETE FROM friendship WHERE id1=" + entity.getE2().getId() + " and id2="
+                + entity.getE1().getId() + ";";
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(querry);
         ) {
@@ -164,6 +167,59 @@ public class FriendshipDatabaseRepository implements Repository<Tuple<User,User>
     @Override
     public Optional<Friendship> update(Friendship entity) {
         return Optional.empty();
+    }
+
+    /*
+    String sql = "SELECT * FROM \"Friendships\" " +
+                    "WHERE \"FirstUserId\" = ? OR \"SecondUserId\" = ? " +
+                    "ORDER BY \"FriendshipDate\" " +
+                    "OFFSET (? * ?) ROWS " +
+                    "FETCH NEXT ? ROWS ONLY";
+     */
+    @Override
+    public ArrayList<Friendship> findPage(int page, int pageSize, Long userId) {
+        String sql1 = "SELECT * FROM friendship WHERE id1 = ? OR id2 = ? ORDER BY date " +
+                "OFFSET (? * ?) ROWS " +
+                "FETCH NEXT ? ROWS ONLY";
+        ArrayList<Friendship> friendships = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = connection.prepareStatement(sql1);) {
+            statement.setLong(1, userId);
+            statement.setLong(2, userId);
+            statement.setInt(3, page);
+            statement.setInt(4, pageSize);
+            statement.setInt(5, pageSize);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Long id1 = resultSet.getLong("id1");
+                Long id2 = resultSet.getLong("id2");
+                String date = resultSet.getString(3);
+
+                String sql = "SELECT * FROM userr WHERE id = ?";
+                PreparedStatement statement1 = connection.prepareStatement(sql);
+                statement1.setLong(1, id1);
+                ResultSet resultSet1 = statement1.executeQuery();
+                resultSet1.next();
+                User user1 = new User(resultSet1.getString("first_name"), resultSet1.getString("last_name"), resultSet1.getString("date"), resultSet1.getString("gender"), resultSet1.getString("email"), resultSet1.getString("password"));
+                user1.setId(resultSet1.getLong("id"));
+
+                String sql2 = "SELECT * FROM userr WHERE id = ?";
+                PreparedStatement statement2 = connection.prepareStatement(sql2);
+                statement2.setLong(1, id2);
+                ResultSet resultSet2 = statement2.executeQuery();
+                resultSet2.next();
+                User user2 = new User(resultSet2.getString("first_name"), resultSet2.getString("last_name"), resultSet2.getString("date"), resultSet2.getString("gender"), resultSet2.getString("email"), resultSet2.getString("password"));
+                user2.setId(resultSet2.getLong("id"));
+
+                Tuple<User, User> t = new Tuple<>(user1, user2);
+
+                Friendship friendship = new Friendship(t, date);
+                friendships.add(friendship);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return friendships;
     }
 }
 

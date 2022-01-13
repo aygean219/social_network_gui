@@ -49,31 +49,40 @@ public interface Repository<ID, E extends Entity<ID>> {
      * @throws ValidationException      if the entity is not valid.
      */
     Optional<E> update(E entity);
-    default Optional<E> findUser(String email){
+
+    default Optional<E> findUser(String email) {
         throw new UnsupportedOperationException();
     }
 
-    default Optional<E> findloggedUser(String email,String password){
+    default Optional<E> findloggedUser(String email, String password) {
         throw new UnsupportedOperationException();
     }
 
-    default ArrayList<E> findRoles(User user){
-        throw new UnsupportedOperationException();
-    }
-    default ArrayList<E> findMessages(Long id1,Long id2){
+    default ArrayList<E> findRoles(User user) {
         throw new UnsupportedOperationException();
     }
 
-    default ArrayList<Chat> findChats(Long id){
+    default ArrayList<E> findMessages(Long id1, Long id2) {
         throw new UnsupportedOperationException();
     }
-    default ArrayList<Message> findMessagesOfUser(LocalDate startDate, LocalDate endDate, User loggedUser){
+
+    default ArrayList<Chat> findChats(Long id) {
         throw new UnsupportedOperationException();
     }
-    default ArrayList<Message> findMessagesFromTo(LocalDate startDate,LocalDate endDate,User user,User loggedUser){
+
+    default ArrayList<Message> findMessagesOfUser(LocalDate startDate, LocalDate endDate, User loggedUser) {
         throw new UnsupportedOperationException();
     }
-    default ArrayList<Notification> findEvents(User loggedUser){
+
+    default ArrayList<Message> findMessagesFromTo(LocalDate startDate, LocalDate endDate, User user, User loggedUser) {
+        throw new UnsupportedOperationException();
+    }
+
+    default ArrayList<Notification> findEvents(User loggedUser) {
+        throw new UnsupportedOperationException();
+    }
+
+    default ArrayList<Friendship> findPage(int page, int pageSize, Long userId) {
         throw new UnsupportedOperationException();
     }
 }
