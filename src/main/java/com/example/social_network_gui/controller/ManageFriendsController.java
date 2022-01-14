@@ -251,7 +251,6 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         listViewSuggestedEvents.setCellFactory(param -> new XCell("Subscribe", "-fx-background-color: #2196F3; -fx-text-fill:  #fff;-fx-border-color:  #90CAF9;-fx-border-width: 0 2 2 0;"));
         listViewUserEvents.setCellFactory(param -> new XCell("Unsubscribe", "-fx-background-color:  #ffccd5  ; -fx-text-fill: #800f2f; -fx-border-color: #800f2f;-fx-border-width: 0 2 2 0;"));
 
-
     }
 
     private void init() {

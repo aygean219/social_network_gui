@@ -70,9 +70,9 @@
                                        </children>
                                     </VBox>
                                     <Button fx:id="comingEvents" layoutX="48.0" layoutY="522.0" mnemonicParsing="false" onAction="#handleNotifications" prefHeight="39.0" prefWidth="167.0" style="-fx-background-color: #2196F3;" styleClass="radius" stylesheets="@../css/login-css.css" text="Show Coming Events" textFill="WHITE" AnchorPane.bottomAnchor="146.0" AnchorPane.rightAnchor="37.0" />
-                                    <StackPane fx:id="notificationsStackPane" layoutX="172.0" layoutY="508.0" prefHeight="22.0" prefWidth="26.0">
+                                    <StackPane fx:id="notificationsStackPane" layoutX="172.0" layoutY="508.0" prefHeight="22.0" prefWidth="26.0" visible="false">
                                        <children>
-                                          <Circle fill="#ffccd5" radius="14.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
+                                          <Circle fill="#ffccd5" radius="14.0" stroke="BLACK" strokeType="INSIDE" />
                                           <Label fx:id="notificationsNrLabel" textFill="#800f2f">
                                              <font>
                                                 <Font name="Arial Rounded MT Bold" size="18.0" />
