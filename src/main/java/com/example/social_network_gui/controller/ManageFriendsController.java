@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class ManageFriendsController implements Observer<RequestsChangeEvent> {
-    private static final int pageSize = 5;
+    private static final int pageSize = 9;
 
     @FXML
     private Label nameLabel;
@@ -67,7 +67,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @FXML
     TableView<UserRequestDTO> tableViewUsers;
     @FXML
-    private ListView<User> listOfUsers;
+    ListView<User> listOfUsers;
     @FXML
     Button removeButton;
     @FXML
@@ -183,7 +183,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                         text = new Text(msg.getMessage());
                     }
                     TextFlow textFlow = new TextFlow();
-                    textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;" + " -fx-background-radius :20px ;");
+                    textFlow.setStyle("-fx-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;");
                     textFlow.setPadding(new Insets(5, 5, 5, 5));
                     text.setFill(Color.color(1, 1, 1));
 
@@ -209,19 +209,19 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                     }
 
                     TextFlow textFlow = new TextFlow();
-                    textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;" + " -fx-background-radius :20px ;");
+                    textFlow.setStyle("-fx-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;");
                     textFlow.setPadding(new Insets(5, 5, 5, 5));
                     text.setFill(Color.color(1, 1, 1));
                     EventHandler<MouseEvent> mouseEventHandler
                             = e -> {
                         messageSelected = msg;
-                        textFlow.setStyle(" -fx-background-color: #53A2BE;" + " -fx-background-radius :20px ;" + "-fx-border-color:  #0A2239;" + "-fx-border-radius: 20px");
+                        textFlow.setStyle(" -fx-background-color: #1976D2;" + " -fx-background-radius :20px ;" + "-fx-border-color:  #0D47A1;" + "-fx-border-radius: 20px");
                     };
                     textFlow.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandler);//
 
                     EventHandler<MouseEvent> mouseEventHandler2
                             = e -> {
-                        textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;" + " -fx-background-radius :20px ;");
+                        textFlow.setStyle("-fx-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;");
                     };
                     sendMessage.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandler2);
                     hBox.setPadding(new Insets(5));
@@ -238,8 +238,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     private void initializeEvents() {
         suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
         userEvents.setAll(eventService.getEventsForUser(networkService.getLoggedUser()));
-        listViewSuggestedEvents.setCellFactory(param -> new XCell("Subscribe"));
-        listViewUserEvents.setCellFactory(param -> new XCell("Unsubscribe"));
+        listViewSuggestedEvents.setCellFactory(param -> new XCell("Subscribe","-fx-background-color: #2196F3; -fx-text-fill:  #fff;-fx-border-color:  #90CAF9;-fx-border-width: 0 2 2 0;"));
+        listViewUserEvents.setCellFactory(param -> new XCell("Unsubscribe","-fx-background-color:  #ffccd5  ; -fx-text-fill: #800f2f; -fx-border-color: #800f2f;-fx-border-width: 0 2 2 0;"));
 
 
     }
@@ -256,13 +256,17 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     private TableView<User> createTableFriends() {
         TableView<User> friends = new TableView();
-        TableColumn<User, String> tableColumnFirstName = new TableColumn<>();
-        tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        tableColumnFirstName.setPrefWidth(110);
+        friends.setPrefWidth(300);
+        //friends.setPrefHeight(200);
 
-        TableColumn<User, String> tableColumnLastName = new TableColumn<>();
+        TableColumn<User, String> tableColumnFirstName = new TableColumn<>("First Name");
+        tableColumnFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        tableColumnFirstName.setPrefWidth(150);
+        tableColumnFirstName.setStyle("-fx-background-color: #BBDEFB");
+        TableColumn<User, String> tableColumnLastName = new TableColumn<>("Last Name");
         tableColumnLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        tableColumnLastName.setPrefWidth(110);
+        tableColumnLastName.setPrefWidth(150);
+        tableColumnLastName.setStyle("-fx-background-color: #BBDEFB");
 
         friends.getColumns().add(tableColumnFirstName);
         friends.getColumns().add(tableColumnLastName);
@@ -270,7 +274,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         TableColumn<User, Void> tableColumnButtonMessage = new TableColumn<>();
 
         tableColumnButtonMessage.setCellFactory(addButtonToTableForMessage());
-        tableColumnButtonMessage.setPrefWidth(105);
+        tableColumnButtonMessage.setPrefWidth(240);
+        tableColumnButtonMessage.setStyle("-fx-background-color: #BBDEFB");
 
         friends.getColumns().add(tableColumnButtonMessage);
         return friends;
@@ -289,7 +294,10 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         addButtonToTable();
 
         listOfUsers.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        listOfUsers.setCellFactory(param->new FriendsCell());
         listOfUsers.setItems(chats);
+        listOfUsers.setStyle("-fx-text-fill: #2196f3;");
         tableViewRequests.setItems(requests);
 
         tableViewUsers.setItems(users);
@@ -395,12 +403,12 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     public void logoutAction(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("login-view.fxml"));
+        loader.setLocation(getClass().getResource("login-winter-view.fxml"));
 
-        AnchorPane root = loader.load();
+        BorderPane root = loader.load();
 
-        LoginController ctrl = loader.getController();
-        ctrl.setServices(userService, friendshipService, networkService, eventService);
+        SignUpAndLoginController ctrl = loader.getController();
+        ctrl.setServices(userService,friendshipService,networkService,eventService);
 
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Social network");
@@ -457,10 +465,10 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                                 Status x = getTableView().getItems().get(getIndex()).getStatus();
                                 if (x == null) {
                                     btn.setText("ADD FRIEND");
-                                    btn.setStyle("-fx-background-color: #28AFB0FF; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
+                                    btn.setStyle("-fx-background-color:  #2196F3; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
                                 } else {
                                     btn.setText("CANCEL REQUEST");
-                                    btn.setStyle("-fx-background-color: #EE964BFF; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
+                                    btn.setStyle("-fx-background-color: #ffccd5; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
 
                                 }
                             }
@@ -536,7 +544,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
         Text text = new Text(new_message);
         TextFlow textFlow = new TextFlow();
-        textFlow.setStyle("-fx-color: #53A2BE ; " + " -fx-background-color: #0A2239;" + " -fx-background-radius :20px ;");
+        textFlow.setStyle("-fx-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;");
         textFlow.setPadding(new Insets(5, 10, 5, 10));
         text.setFill(Color.color(1, 1, 1));
 
@@ -572,7 +580,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                             setGraphic(null);
                         } else {
                             setGraphic(btn);
-                            btn.setStyle("-fx-background-color: #28AFB0FF; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
+                            btn.setStyle("-fx-background-color:  #2196F3; -fx-border-color: #000000FF;-fx-border-width: 0 2 2 0;");
                         }
                     }
                 };
@@ -636,11 +644,13 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         Button button = new Button("");
 
 
-        public XCell(String buttonText) {
+        public XCell(String buttonText,String style) {
             super();
             button.setText(buttonText);
+            button.setStyle(style);
             hbox.setStyle("-fx-alignment: center");
             hbox.getChildren().addAll(label, pane, button);
+            label.setStyle("-fx-text-fill: #2196f3;");
             HBox.setHgrow(pane, Priority.ALWAYS);
             button.setOnAction(e -> {
                 if (buttonText.equals("Subscribe")) {
@@ -648,9 +658,11 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                     Event selected = getListView().getItems().get(getIndex());
                     ManageFriendsController.this.eventService.subscribeUser(selected, ManageFriendsController.this.networkService.getLoggedUser());
 
+
                     suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
                     userEvents.setAll(eventService.getEventsForUser(networkService.getLoggedUser()));
                     updateItem(selected, false);
+
 
                 } else {
                     Event selected = getListView().getItems().get(getIndex());
@@ -660,6 +672,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                     userEvents.setAll(eventService.getEventsForUser(networkService.getLoggedUser()));
 
                     updateItem(selected, false);
+
                 }
             });
 
@@ -674,6 +687,33 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
             } else {
                 label.setText(item != null ? item.toString() : "<null>");
                 setGraphic(hbox);
+
+            }
+        }
+    }
+
+
+    class FriendsCell extends ListCell<User> {
+        Label label = new Label("");
+
+
+        public FriendsCell() {
+            super();
+            label.setStyle("-fx-text-fill: #2196f3;");
+
+        }
+
+        @Override
+        protected void updateItem(User item, boolean empty) {
+            super.updateItem(item, empty);
+            setText(null);
+            if (empty) {
+                setGraphic(null);
+            } else {
+                label.setText(item != null ? item.toString() : "<null>");
+                //label.setStyle("-fx-text-fill: #2196f3");
+                setGraphic(label);
+
             }
         }
     }

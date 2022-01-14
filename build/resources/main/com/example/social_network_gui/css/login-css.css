@@ -1,0 +1,33 @@
+.primary-color{
+    -fx-background-color: #BBDEFB;
+}
+.radius{
+    -fx-background-radius:30;
+}
+.transparent{
+    -fx-background-color: rgba(0,0,0,0);
+    -fx-text-fill: #2196F3;
+}
+.withe-background{
+    -fx-background-color: #FFF;
+}
+.input{
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #0D47A1;
+}
+.my-tab.custom-headers{
+    -fx-background-color: #0D47A1 ;
+}
+.table-column{
+    -fx-text-fill: #0d47a1;
+
+}
+.table-friends{
+    -fx-border-color: #90CAF9;
+    -fx-border-width: 2;
+    -fx-text-fill: #2196f3;
+}
+.table-friends:pressed{
+    -fx-background-color: #BBDEFB;
+    -fx-text-fill: #ffccd5;
+}

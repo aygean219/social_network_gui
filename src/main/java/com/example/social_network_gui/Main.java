@@ -1,6 +1,6 @@
 package com.example.social_network_gui;
 
-import com.example.social_network_gui.controller.LoginController;
+import com.example.social_network_gui.controller.SignUpAndLoginController;
 import com.example.social_network_gui.domain.*;
 import com.example.social_network_gui.repository.Repository;
 import com.example.social_network_gui.repository.database.*;
@@ -14,8 +14,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -43,12 +42,24 @@ public class Main extends Application {
         NetworkService networkService = new NetworkService(friendshipDatabaseRepository, userDatabaseRepository, friendRequestRepository, messageRepository, roleTypeRepository);
         EventService eventService = new EventService(eventDatabaseRepository);
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("controller/login-view.fxml"));
+        /*loader.setLocation(getClass().getResource("controller/login-view.fxml"));
 
         AnchorPane root = loader.load();
 
         LoginController ctrl = loader.getController();
         ctrl.setServices(userService, friendshipService, networkService,eventService);
+
+
+        primaryStage.setScene(new Scene(root));
+        primaryStage.setTitle("Social Network");
+        //primaryStage.setResizable(false);
+        primaryStage.show();*/
+        loader.setLocation(getClass().getResource("controller/login-winter-view.fxml"));
+
+        BorderPane root = loader.load();
+
+        SignUpAndLoginController ctrl = loader.getController();
+        ctrl.setServices(userService,friendshipService,networkService,eventService);
 
 
         primaryStage.setScene(new Scene(root));
