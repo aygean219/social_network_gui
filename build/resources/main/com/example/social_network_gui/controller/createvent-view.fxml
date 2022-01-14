@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -11,13 +12,13 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="377.0" prefWidth="334.0" style="-fx-background-color: #28AFB0;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.CreateventView">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="377.0" prefWidth="334.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.CreateventView">
 <children>
-    <Button fx:id="createButton" layoutX="117.0" layoutY="309.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #28AFB0;" text="CREATE" onAction="#createAction">
+    <Button fx:id="createButton" layoutX="117.0" layoutY="309.0" mnemonicParsing="false" onAction="#createAction" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #0d47a1;" styleClass="radius" stylesheets="@../css/login-css.css" text="CREATE" textFill="WHITE">
         <font>
             <Font name="System Bold" size="16.0" />
         </font></Button>
-    <GridPane layoutX="26.0" layoutY="72.0" prefHeight="217.0" prefWidth="282.0">
+    <GridPane layoutX="26.0" layoutY="72.0" prefHeight="217.0" prefWidth="282.0" stylesheets="@../css/login-css.css">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="105.20001220703125" minWidth="10.0" prefWidth="92.0000244140625" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.7999755859375" minWidth="10.0" prefWidth="160.7999755859375" />
@@ -29,28 +30,44 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
         <children>
-            <Label alignment="CENTER" prefHeight="18.0" prefWidth="73.0" text="Title">
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="73.0" text="Title" textFill="#64b5f6">
                 <font>
                     <Font name="Arial Rounded MT Bold" size="12.0" />
                 </font></Label>
-            <TextField fx:id="titleField" prefHeight="15.0" prefWidth="141.0" GridPane.columnIndex="1" />
+            <TextField fx:id="titleField" prefHeight="15.0" prefWidth="141.0" GridPane.columnIndex="1">
+               <styleClass>
+                  <String fx:value="transparent" />
+                  <String fx:value="input" />
+               </styleClass></TextField>
 
-            <Label alignment="CENTER" prefHeight="18.0" prefWidth="73.0" text="Description" GridPane.rowIndex="1">
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="73.0" text="Description" textFill="#64b5f6" GridPane.rowIndex="1">
                 <font>
                     <Font name="Arial Rounded MT Bold" size="12.0" />
                 </font></Label>
-            <Label alignment="CENTER" prefHeight="18.0" prefWidth="73.0" text="Location" GridPane.rowIndex="2">
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="73.0" text="Location" textFill="#64b5f6" GridPane.rowIndex="2">
                 <font>
                     <Font name="Arial Rounded MT Bold" size="12.0" />
                 </font></Label>
-            <TextField fx:id="locationField" prefHeight="15.0" prefWidth="141.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label alignment="CENTER" prefHeight="18.0" prefWidth="73.0" text="Date" GridPane.rowIndex="3">
+            <TextField fx:id="locationField" prefHeight="15.0" prefWidth="141.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <styleClass>
+                  <String fx:value="transparent" />
+                  <String fx:value="input" />
+               </styleClass></TextField>
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="73.0" text="Date" textFill="#64b5f6" GridPane.rowIndex="3">
                 <font>
                     <Font name="Arial Rounded MT Bold" size="12.0" />
                 </font>
             </Label>
-            <DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <TextArea fx:id="descriptionField" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <styleClass>
+                  <String fx:value="transparent" />
+                  <String fx:value="input" />
+               </styleClass></DatePicker>
+            <TextArea fx:id="descriptionField" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <styleClass>
+                  <String fx:value="transparent" />
+                  <String fx:value="input" />
+               </styleClass></TextArea>
         </children>
     </GridPane>
     <Label fx:id="errorLabel" layoutX="65.0" layoutY="290.0" prefHeight="26.0" prefWidth="219.0" textFill="#cf1212">
@@ -58,7 +75,7 @@
             <Font name="Arial Rounded MT Bold" size="13.0" />
         </font>
     </Label>
-    <Label layoutX="75.0" layoutY="25.0" text="Create event">
+    <Label layoutX="75.0" layoutY="25.0" text="Create event" textFill="#64b5f6">
         <font>
             <Font name="System Bold" size="31.0" />
         </font>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -15,53 +16,172 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="558.0" prefWidth="884.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.ManageFriendsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: white;" stylesheets="@../css/login-css.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.ManageFriendsController">
    <children>
-      <TabPane fx:id="tabPane" prefHeight="566.0" prefWidth="884.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" prefHeight="700.0" prefWidth="1000.0" styleClass="my-tab" stylesheets="@../css/login-css.css" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab style="-fx-background-color: #ddcecd;" text="Account">
+          <Tab style="-fx-background-color: white;" text="Account">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="545.0" prefWidth="884.0" style="-fx-background-color: #eee5e5;">
+              <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: #E3F2FD;">
                      <children>
-                        <Button fx:id="removeButton" alignment="CENTER" layoutX="723.0" layoutY="211.0" mnemonicParsing="false" onAction="#removeFriend" prefHeight="31.0" prefWidth="128.0" style="-fx-background-color: #2c8c99;" text="Remove friend" />
-                        <AnchorPane layoutY="4.0" prefHeight="486.0" prefWidth="254.0" style="-fx-background-color: #28afb0; -fx-border-color: #ee964b;">
+                        <HBox layoutY="-3.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="707.0" prefWidth="1000.0">
                            <children>
-                              <Label fx:id="nameLabel" alignment="CENTER" layoutX="14.0" layoutY="155.0" prefHeight="22.0" prefWidth="222.0">
-                                 <font>
-                                    <Font name="Arial Rounded MT Bold" size="21.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="45.0" layoutY="224.0" prefHeight="22.0" prefWidth="123.0" style="-fx-border-color: #000000FF;" text="ACCOUNT INFO">
-                                 <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="emailLabel" layoutX="20.0" layoutY="246.0" prefHeight="22.0" prefWidth="228.0">
-                                 <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="genderLabel" layoutX="19.0" layoutY="269.0" prefHeight="22.0" prefWidth="228.0">
-                                 <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="birthdateLabel" layoutX="18.0" layoutY="292.0" prefHeight="22.0" prefWidth="232.0">
-                                 <font>
-                                    <Font name="Arial Rounded MT Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <ImageView fitHeight="118.0" fitWidth="124.0" layoutX="66.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/user.png" />
-                                 </image>
-                              </ImageView>
-                              <Button fx:id="logoutButton" layoutX="2.0" layoutY="323.0" mnemonicParsing="false" onAction="#logoutAction" prefHeight="39.0" prefWidth="250.0" style="-fx-background-color: #ee964b;" text="Log out" />
+                              <AnchorPane prefHeight="700.0" prefWidth="250.0" style="-fx-background-color: white;">
+                                 <children>
+                                    <ImageView fitHeight="158.0" fitWidth="165.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/colt.png" />
+                                       </image>
+                                    </ImageView>
+                                    <ImageView fitHeight="158.0" fitWidth="177.0" layoutX="38.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/pinguin.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Button fx:id="logoutButton" layoutX="68.0" layoutY="580.0" mnemonicParsing="false" onAction="#logoutAction" prefHeight="39.0" prefWidth="118.0" style="-fx-background-color: #0d47a1;" styleClass="radius" stylesheets="@../css/login-css.css" text="Log out" textFill="WHITE" />
+                                    <VBox layoutX="15.0" layoutY="313.0" prefHeight="200.0" prefWidth="223.0" stylesheets="@../css/login-css.css">
+                                       <children>
+                                          <Label fx:id="nameLabel" alignment="CENTER" prefHeight="36.0" prefWidth="222.0" styleClass="transparent" stylesheets="@../css/login-css.css" textFill="#64b5f6">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="21.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="emailLabel" alignment="CENTER" prefHeight="37.0" prefWidth="223.0" styleClass="transparent" textFill="#64b5f6">
+                                             <font>
+                                                <Font name="Arial Rounded MT Bold" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="genderLabel" alignment="CENTER" prefHeight="37.0" prefWidth="223.0" styleClass="transparent" textFill="#64b5f6">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="birthdateLabel" alignment="CENTER" prefHeight="38.0" prefWidth="223.0" styleClass="transparent" textFill="#64b5f6">
+                                             <font>
+                                                <Font name="Arial Rounded MT Bold" size="15.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                    <Button fx:id="comingEvents" layoutX="48.0" layoutY="522.0" mnemonicParsing="false" onAction="#handleNotifications" prefHeight="39.0" prefWidth="167.0" style="-fx-background-color: #2196F3;" styleClass="radius" stylesheets="@../css/login-css.css" text="Show Coming Events" textFill="WHITE" AnchorPane.bottomAnchor="146.0" AnchorPane.rightAnchor="37.0" />
+                                 </children>
+                              </AnchorPane>
+                              <VBox prefHeight="700.0" prefWidth="800.0">
+                                 <children>
+                                    <HBox prefHeight="50.0" prefWidth="750.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="57.0" prefWidth="754.0" text="Brrr!!!" textFill="#0d47a1">
+                                             <font>
+                                                <Font name="Bell MT" size="48.0" />
+                                             </font>
+                                          </Label>
+                                          <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../images/brrr.png" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="312.0" prefWidth="750.0">
+                                       <children>
+                                          <VBox alignment="CENTER" prefHeight="297.0" prefWidth="222.0" spacing="70.0">
+                                             <children>
+                                                <Label alignment="CENTER" prefHeight="62.0" prefWidth="396.0" text="Your friends" textFill="#2196f3">
+                                                   <font>
+                                                      <Font name="Bell MT" size="36.0" />
+                                                   </font>
+                                                </Label>
+                                                <Button fx:id="removeButton" alignment="CENTER" mnemonicParsing="false" onAction="#removeFriend" prefHeight="39.0" prefWidth="167.0" style="-fx-background-color: #2196f3;" styleClass="radius" stylesheets="@../css/login-css.css" text="Remove friend" textFill="WHITE" />
+                                             </children>
+                                          </VBox>
+                                          <Pagination fx:id="friendsPagination" prefHeight="279.0" prefWidth="552.0" />
+                                       </children>
+                                    </HBox>
+                                    <Label prefHeight="54.0" prefWidth="748.0" text="Export your activity in PDF files :" textFill="#2196f3">
+                                       <font>
+                                          <Font name="Bell MT" size="36.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox prefHeight="86.0" prefWidth="730.0">
+                                       <VBox.margin>
+                                          <Insets right="20.0" top="30.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <VBox prefHeight="265.0" prefWidth="208.0">
+                                             <children>
+                                                <Label alignment="CENTER" prefHeight="38.0" prefWidth="134.0" text="Start Date" textFill="#64b5f6">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="20.0" />
+                                                   </font>
+                                                </Label>
+                                                <DatePicker fx:id="startDate" prefHeight="31.0" prefWidth="166.0" />
+                                             </children>
+                                             <HBox.margin>
+                                                <Insets left="10.0" right="30.0" />
+                                             </HBox.margin>
+                                          </VBox>
+                                          <VBox prefHeight="265.0" prefWidth="208.0">
+                                             <children>
+                                                <Label alignment="CENTER" prefHeight="38.0" prefWidth="134.0" text="End date" textFill="#64b5f6">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="20.0" />
+                                                   </font>
+                                                </Label>
+                                                <DatePicker fx:id="endDate" prefHeight="31.0" prefWidth="155.0" />
+                                             </children>
+                                             <padding>
+                                                <Insets right="30.0" />
+                                             </padding>
+                                          </VBox>
+                                          <VBox prefHeight="265.0" prefWidth="164.0">
+                                             <children>
+                                                <Label alignment="CENTER" prefHeight="38.0" prefWidth="134.0" text="File Name:" textFill="#64b5f6">
+                                                   <font>
+                                                      <Font name="Arial Rounded MT Bold" size="20.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="pdfName" prefHeight="31.0" prefWidth="155.0" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="40.0" right="20.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox prefHeight="49.0" prefWidth="750.0" spacing="50.0">
+                                       <children>
+                                          <Button fx:id="report1" alignment="CENTER" mnemonicParsing="false" onAction="#handleSaveReport1" prefHeight="33.0" prefWidth="216.0" style="-fx-background-color: #1E88E5;" styleClass="radius" stylesheets="@../css/login-css.css" text="Friends and Messages Report" textFill="WHITE" />
+                                          <Button fx:id="report2" alignment="CENTER" mnemonicParsing="false" onAction="#handleSaveReport2" prefHeight="33.0" prefWidth="216.0" style="-fx-background-color: #1E88E5;" styleClass="radius" text="Messages from User Report" textFill="WHITE">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                       <padding>
+                                          <Insets left="100.0" right="100.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </VBox>
                            </children>
-                        </AnchorPane>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab style="-fx-background-color: white;" text="Events">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: white;">
+                     <children>
+                        <Button fx:id="createEventButton" layoutX="597.0" layoutY="597.0" mnemonicParsing="false" onAction="#createNewEvent" prefHeight="32.0" prefWidth="233.0" style="-fx-background-color: #2196F3;" styleClass="radius" stylesheets="@../css/login-css.css" text="Create new event" textFill="WHITE" />
+                        <ListView fx:id="listViewSuggestedEvents" layoutX="545.0" layoutY="290.0" prefHeight="279.0" prefWidth="338.0" style="-fx-border-color: #90CAF9; -fx-border-width: 2;" />
 <!--                        <TableView fx:id="tableViewFriends" blendMode="DARKEN" layoutX="256.0" layoutY="130.0" prefHeight="192.0" prefWidth="433.0">-->
 <!--                          <style>-fx-border-color: #19647E; -fx-border-width: 2;</style>-->
 <!--                            <columns>-->
@@ -73,127 +193,119 @@
 <!--                              <Blend mode="BLUE" />-->
 <!--                           </effect>-->
 <!--                        </TableView>-->
-                        <ListView fx:id="listViewUserEvents" layoutX="256.0" layoutY="341.0" prefHeight="149.0" prefWidth="434.0" style="-fx-background-color: #eee5e5; -fx-border-color: #19647E; -fx-border-width: 2;" stylesheets="@../css/ListViewStyle.css" />
-                        <Label alignment="CENTER" layoutX="714.0" layoutY="334.0" prefHeight="38.0" prefWidth="146.0" text="Events">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="18.0" />
-                           </font>
-                        </Label>
-                        <DatePicker fx:id="startDate" layoutX="254.0" layoutY="33.0" />
-                        <DatePicker fx:id="endDate" layoutX="492.0" layoutY="33.0" />
-                        <Label alignment="CENTER" layoutX="254.0" layoutY="-5.0" prefHeight="38.0" prefWidth="134.0" text="Start Date">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" layoutX="580.0" layoutY="-5.0" prefHeight="38.0" prefWidth="134.0" text="End date">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <Button fx:id="report1" alignment="CENTER" layoutX="256.0" layoutY="70.0" mnemonicParsing="false" onAction="#handleSaveReport1" prefHeight="33.0" prefWidth="216.0" style="-fx-background-color: #2c8c99;" text="Friends and Messages Report" />
-                        <Button fx:id="report2" alignment="CENTER" layoutX="493.0" layoutY="70.0" mnemonicParsing="false" onAction="#handleSaveReport2" prefHeight="33.0" prefWidth="216.0" style="-fx-background-color: #2c8c99;" text="Messages from User Report" />
-                        <Label alignment="CENTER" layoutX="720.0" layoutY="130.0" prefHeight="38.0" prefWidth="134.0" text="All Friends">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="pdfName" layoutX="722.0" layoutY="33.0" prefHeight="31.0" prefWidth="155.0" />
-                        <Label alignment="CENTER" layoutX="733.0" prefHeight="38.0" prefWidth="134.0" text="File Name:">
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <Button fx:id="comingEvents" layoutX="704.0" layoutY="396.0" mnemonicParsing="false" onAction="#handleNotifications" prefHeight="39.0" prefWidth="167.0" style="-fx-background-color: #ee964b;" text="Show Coming Events" />
-                        <Pagination fx:id="friendsPagination" layoutX="321.0" layoutY="127.0" prefHeight="200.0" prefWidth="328.0" />
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-          <Tab style="-fx-background-color: #ddcecd;" text="Suggestions">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #eee5e5;">
-                     <children>
-                        <AnchorPane layoutX="31.0" layoutY="22.0" prefHeight="445.0" prefWidth="722.0">
+                        <ListView fx:id="listViewUserEvents" layoutX="36.0" layoutY="288.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="282.0" prefWidth="445.0" style="-fx-border-color: #90CAF9; -fx-border-width: 2;" />
+                        <VBox layoutX="563.0" layoutY="43.0" prefHeight="146.0" prefWidth="337.0">
                            <children>
-                              <Label alignment="CENTER" layoutY="4.0" prefHeight="38.0" prefWidth="253.0" text="People you may know">
+                              <Label alignment="CENTER" prefHeight="82.0" prefWidth="461.0" text="Let's warm up together with" textFill="#2196f3">
                                  <font>
-                                    <Font name="Arial Rounded MT Bold" size="18.0" />
+                                    <Font name="Bell MT" size="24.0" />
                                  </font>
                               </Label>
-                              <TableView fx:id="tableViewUsers" blendMode="DARKEN" layoutX="23.0" layoutY="43.0" prefHeight="276.0" prefWidth="322.0" style="-fx-border-color: #19647E; -fx-border-width: 2;">
+                              <Label alignment="CENTER" prefHeight="82.0" prefWidth="461.0" text=" a cup of hot chocolate at" textFill="#2196f3">
+                                 <font>
+                                    <Font name="Bell MT" size="23.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="82.0" prefWidth="461.0" text=" the upcoming events" textFill="#2196f3">
+                                 <font>
+                                    <Font name="Bell MT" size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <ImageView fitHeight="269.0" fitWidth="308.0" layoutX="6.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/globuri.png" />
+                           </image>
+                        </ImageView>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab style="-fx-background-color: white;" text="Friend Requests">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: white;">
+                     <children>
+                        <AnchorPane layoutX="22.0" layoutY="124.0" prefHeight="369.0" prefWidth="956.0">
+                           <children>
+                              <TableView fx:id="tableViewRequests" layoutX="27.0" layoutY="62.0" prefHeight="294.0" prefWidth="408.0" style="-fx-border-color: #90CAF9; -fx-border-width: 2;">
+                                <columns>
+                                  <TableColumn fx:id="tableColumnName" prefWidth="188.0" style="-fx-background-color: #E3F2FD; -fx-opacity: 0.8;" text="Name" />
+                                  <TableColumn fx:id="tableColumnStatus" prefWidth="213.0" style="-fx-background-color: #E3F2FD; -fx-opacity: 0.8;" text="Status" />
+                                </columns>
+                              </TableView>
+                              <Button layoutX="475.0" layoutY="140.0" mnemonicParsing="false" onMouseClicked="#accept_request" prefHeight="32.0" prefWidth="91.0" style="-fx-background-color: #ffccd5;" styleClass="radius" text="Accept" textFill="#800f2f" />
+                               <Button layoutX="475.0" layoutY="211.0" mnemonicParsing="false" onMouseClicked="#reject_request" prefHeight="32.0" prefWidth="91.0" style="-fx-background-color: #2196F3;" styleClass="radius" text="Reject" textFill="WHITE" />
+                              <TableView fx:id="tableViewUsers" blendMode="DARKEN" layoutX="599.0" layoutY="64.0" prefHeight="287.0" prefWidth="322.0" style="-fx-border-color: #90CAF9; -fx-border-width: 2;">
                                  <columns>
-                                    <TableColumn fx:id="tableColumnNameSuggestions" prefWidth="176.80007934570312" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="Suggestions" />
-                                    <TableColumn fx:id="tableColumnButtons" prefWidth="141.59999694824216" sortable="false" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8; -fx-alignment: CENTER_RIGHT;" />
+                                    <TableColumn fx:id="tableColumnNameSuggestions" prefWidth="176.80007934570312" style="-fx-background-color: #E3F2FD; -fx-opacity: 0.8;" text="Suggestions" />
+                                    <TableColumn fx:id="tableColumnButtons" prefWidth="141.59999694824216" sortable="false" style="-fx-background-color: #E3F2FD; -fx-opacity: 0.8; -fx-alignment: CENTER_RIGHT;" />
                                  </columns>
                                  <effect>
                                     <Blend mode="BLUE" />
                                  </effect>
                               </TableView>
-                              <ListView fx:id="listViewSuggestedEvents" layoutX="367.0" layoutY="43.0" prefHeight="279.0" prefWidth="338.0" style="-fx-background-color: #eee5e5; -fx-border-color: #19647E; -fx-border-width: 2;" stylesheets="@../css/ListViewStyle.css" />
-                              <Label alignment="CENTER" layoutX="333.0" layoutY="4.0" prefHeight="38.0" prefWidth="146.0" text="Events">
-                                 <font>
-                                    <Font name="Arial Rounded MT Bold" size="18.0" />
-                                 </font>
-                              </Label>
-                              <Button fx:id="createEventButton" layoutX="474.0" layoutY="378.0" mnemonicParsing="false" onAction="#createNewEvent" prefHeight="32.0" prefWidth="233.0" style="-fx-background-color: #2c8c99;" text="Create new event" />
                            </children>
                         </AnchorPane>
-                     </children></AnchorPane>
-            </content>
-          </Tab>
-            <Tab style="-fx-background-color: #ddcecd;" text="Friend Requests">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #eee5e5;">
-                     <children>
-                        <AnchorPane layoutX="31.0" layoutY="16.0" prefHeight="387.0" prefWidth="610.0">
+                        <ImageView fitHeight="167.0" fitWidth="207.0" layoutX="758.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/prieteni.png" />
+                           </image>
+                        </ImageView>
+                        <VBox layoutX="36.0" layoutY="63.0" prefHeight="86.0" prefWidth="337.0">
                            <children>
-                              <TableView fx:id="tableViewRequests" layoutX="27.0" layoutY="62.0" prefHeight="290.0" prefWidth="405.0" style="-fx-border-color: #19647E; -fx-border-width: 2;">
-                                <columns>
-                                  <TableColumn fx:id="tableColumnName" prefWidth="188.0" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="Name" />
-                                  <TableColumn fx:id="tableColumnStatus" prefWidth="213.0" style="-fx-background-color: #28AFB0; -fx-opacity: 0.8;" text="Status" />
-                                </columns>
-                              </TableView>
-                              <Button layoutX="475.0" layoutY="140.0" mnemonicParsing="false" onMouseClicked="#accept_request" prefHeight="32.0" prefWidth="91.0" style="-fx-background-color: #ee964b;" text="Accept" />
-                               <Button layoutX="475.0" layoutY="211.0" mnemonicParsing="false" onMouseClicked="#reject_request" prefHeight="32.0" prefWidth="91.0" style="-fx-background-color: #2c8c99;" text="Reject" />
-                              <Label alignment="CENTER" layoutX="27.0" layoutY="23.0" prefHeight="38.0" prefWidth="147.0" text="Friend requests">
+                              <Label alignment="CENTER" prefHeight="52.0" prefWidth="337.0" text="Good friends are like snowflakes" textFill="#2196f3">
                                  <font>
-                                    <Font name="Arial Rounded MT Bold" size="18.0" />
+                                    <Font name="Bell MT" size="24.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="34.0" prefWidth="337.0" text="all different and all beautiful" textFill="#2196f3">
+                                 <font>
+                                    <Font name="Bell MT" size="23.0" />
                                  </font>
                               </Label>
                            </children>
-                        </AnchorPane>
+                        </VBox>
                      </children>
                   </AnchorPane>
               </content>
             </Tab>
-            <Tab style="-fx-background-color: #ddcecd;" text="Chat">
+            <Tab style="-fx-background-color: white;" text="Chat">
               <content>
                 <AnchorPane fx:id="chatTab" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                     <children>
-                        <Button fx:id="sendMessage" layoutX="323.0" layoutY="392.0" mnemonicParsing="false" onAction="#handleSendButton" prefHeight="34.0" prefWidth="116.0" style="-fx-background-color: #ee964b;" text="Send Message" />
-                        <TextField fx:id="textMessage" layoutX="14.0" layoutY="392.0" prefHeight="34.0" prefWidth="302.0" />
-                        <ScrollPane layoutX="14.0" layoutY="34.0" prefHeight="336.0" prefWidth="435.0">
+                        <Button fx:id="sendMessage" layoutX="333.0" layoutY="534.0" mnemonicParsing="false" onAction="#handleSendButton" prefHeight="34.0" prefWidth="116.0" style="-fx-background-color: ffccd5;" styleClass="radius" text="Send Message" textFill="#800f2f" />
+                        <TextField fx:id="textMessage" layoutX="24.0" layoutY="534.0" prefHeight="34.0" prefWidth="302.0" />
+                        <ScrollPane layoutX="24.0" layoutY="163.0" prefHeight="336.0" prefWidth="435.0">
                             <content>
-                                <VBox fx:id="vBoxMessage" prefHeight="326.0" prefWidth="424.0" style="-fx-background-color: #28AFB0;" />
+                                <VBox fx:id="vBoxMessage" prefHeight="326.0" prefWidth="424.0" style="-fx-background-color: #E3F2FD;" />
                             </content>
                         </ScrollPane>
-                        <ListView fx:id="listOfUsers" layoutX="476.0" layoutY="38.0" prefHeight="332.0" prefWidth="273.0" style="-fx-border-color: #28AFB0; -fx-border-width: 2;" />
-                        <TextField fx:id="groupName" layoutX="580.0" layoutY="384.0" prefHeight="34.0" prefWidth="169.0" />
-                        <Label alignment="CENTER" layoutX="24.0" layoutY="5.0" prefHeight="29.0" prefWidth="57.0" text="Chat">
+                        <ListView fx:id="listOfUsers" layoutX="571.0" layoutY="165.0" prefHeight="332.0" prefWidth="273.0" styleClass="table-friends" stylesheets="@../css/login-css.css" />
+                        <TextField fx:id="groupName" layoutX="623.0" layoutY="534.0" prefHeight="34.0" prefWidth="169.0" />
+                        <Button fx:id="sendAllMessage" layoutX="818.0" layoutY="534.0" mnemonicParsing="false" onAction="#sendAll" prefHeight="34.0" prefWidth="162.0" style="-fx-background-color: ffccd5;" styleClass="radius" text="Send Group Message" textFill="#800f2f" />
+                        <Label alignment="CENTER" layoutX="489.0" layoutY="532.0" prefHeight="38.0" prefWidth="134.0" text="Group Name:" textFill="#64b5f6">
                            <font>
-                              <Font name="Arial Rounded MT Bold" size="18.0" />
+                              <Font name="Arial Rounded MT Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" layoutX="418.0" prefHeight="38.0" prefWidth="349.0" text="Select friends to send a group message">
+                        <ImageView fitHeight="57.0" fitWidth="71.0" layoutX="413.0" layoutY="79.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/cup.png" />
+                           </image>
+                        </ImageView>
+                        <Label alignment="CENTER" layoutX="352.0" layoutY="8.0" prefHeight="47.0" prefWidth="274.0" text="Stay close to people" textFill="#2196f3">
                            <font>
-                              <Font name="Arial Rounded MT Bold" size="18.0" />
+                              <Font name="Bell MT" size="24.0" />
                            </font>
                         </Label>
-                        <Button fx:id="sendAllMessage" layoutX="499.0" layoutY="426.0" mnemonicParsing="false" onAction="#sendAll" prefHeight="34.0" prefWidth="162.0" style="-fx-background-color: #ee964b;" text="Send Group Message" />
-                        <Label alignment="CENTER" layoutX="461.0" layoutY="384.0" prefHeight="34.0" prefWidth="119.0" text="Group Name:">
+                        <Label alignment="CENTER" layoutX="383.0" layoutY="52.0" prefHeight="27.0" prefWidth="212.0" text="who feels like a" textFill="#2196f3">
                            <font>
-                              <Font name="Arial Rounded MT Bold" size="18.0" />
+                              <Font name="Bell MT" size="23.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" layoutX="409.0" layoutY="84.0" prefHeight="47.0" prefWidth="144.0" text="            in winter" textFill="#2196f3">
+                           <font>
+                              <Font name="Bell MT" size="20.0" />
                            </font>
                         </Label>
                     </children>
