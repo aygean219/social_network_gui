@@ -1,16 +1,18 @@
 package com.example.social_network_gui.service;
 
-import com.example.social_network_gui.domain.*;
+import com.example.social_network_gui.domain.Event;
+import com.example.social_network_gui.domain.Notification;
+import com.example.social_network_gui.domain.User;
 import com.example.social_network_gui.repository.Repository;
 import com.example.social_network_gui.repository.database.EventsDatabaseRepository;
-import com.example.social_network_gui.repository.memory.RepositoryException;
 import com.example.social_network_gui.utils.EventSubscription;
-import com.example.social_network_gui.validators.ValidationException;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class EventService {
     private final Repository<Long, Event> eventRepository;
@@ -33,12 +35,6 @@ public class EventService {
 
 
     public List<Event> getEventsForUser(User user) {
-//        return StreamSupport.stream(eventRepository.findAll().spliterator(), false)
-//                .filter(x -> x.getUsers()
-//                        .entrySet()
-//                        .stream()
-//                        .anyMatch(y -> (y.getKey().getId().equals(user.getId()) && y.getValue() == (EventSubscription.SUBSCRIBE))))
-//                .collect(Collectors.toList());
         ArrayList<Event> all = eventRepository.findAll();
         ArrayList<Event> sorted = new ArrayList<>();
         for (Event e : all) {
@@ -51,7 +47,21 @@ public class EventService {
         }
         return sorted;
     }
-
+    public List<Event> getEventsForNotification(User user) {
+        ArrayList<Event> all = eventRepository.findAll();
+        ArrayList<Event> sorted = new ArrayList<>();
+        for (Event e : all) {
+            Map<User, EventSubscription> users = e.getUsers();
+            for (Map.Entry<User, EventSubscription> entry : users.entrySet()) {
+                if (user.getId().equals(entry.getKey().getId()) && entry.getValue().equals(EventSubscription.SUBSCRIBE)
+                        && ChronoUnit.DAYS.between(LocalDateTime.now(), e.getDateTime()) <= 2
+                        && 0 <= ChronoUnit.DAYS.between(LocalDateTime.now(), e.getDateTime())) {
+                    sorted.add(e);
+                }
+            }
+        }
+        return sorted;
+    }
     public List<Event> getSuggestedEventsForUser(User user) {
         ArrayList<Event> all = eventRepository.findAll();
         ArrayList<Event> sorted = new ArrayList<>();

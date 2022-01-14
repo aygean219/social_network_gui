@@ -5,7 +5,6 @@ import com.example.social_network_gui.repository.memory.RepositoryException;
 import com.example.social_network_gui.service.EventService;
 import com.example.social_network_gui.service.FriendshipService;
 import com.example.social_network_gui.service.NetworkService;
-import com.example.social_network_gui.domain.Event;
 import com.example.social_network_gui.service.UserService;
 import com.example.social_network_gui.utils.Status;
 import com.example.social_network_gui.utils.events.RequestsChangeEvent;
@@ -20,12 +19,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -40,10 +36,11 @@ import org.controlsfx.control.Notifications;
 
 import java.io.File;
 import java.io.IOException;
-
-import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -106,6 +103,11 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     public TableColumn<RequestUserDTO, String> tableColumnName;
     @FXML
     public TableView<RequestUserDTO> tableViewRequests;
+    @FXML
+    Label notificationsNrLabel;
+    @FXML
+    StackPane notificationsStackPane;
+    ObservableList<Event> notifications = FXCollections.observableArrayList();
 
     private User userTo;
     private Message messageSelected;
@@ -154,8 +156,16 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         friendsPagination.setPageFactory(this::createPage);
         friendsPagination.currentPageIndexProperty().addListener((obs, oldIndex, newIndex) ->
                 createPage(newIndex.intValue()));
-    }
 
+        updateNotificationLabel();
+    }
+    private void updateNotificationLabel(){
+        if (notifications.size() > 0) {
+            notificationsStackPane.setVisible(true);
+            notificationsNrLabel.setText(String.valueOf(notifications.size()));
+        }
+        else notificationsStackPane.setVisible(false);
+    }
     private Node createPage(Integer pageIndex) {
 
         ArrayList<User> friends = networkService.getFriendsOfLoggedUserOnPage(pageIndex, pageSize, networkService.getLoggedUser().getId());
@@ -238,8 +248,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     private void initializeEvents() {
         suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
         userEvents.setAll(eventService.getEventsForUser(networkService.getLoggedUser()));
-        listViewSuggestedEvents.setCellFactory(param -> new XCell("Subscribe","-fx-background-color: #2196F3; -fx-text-fill:  #fff;-fx-border-color:  #90CAF9;-fx-border-width: 0 2 2 0;"));
-        listViewUserEvents.setCellFactory(param -> new XCell("Unsubscribe","-fx-background-color:  #ffccd5  ; -fx-text-fill: #800f2f; -fx-border-color: #800f2f;-fx-border-width: 0 2 2 0;"));
+        listViewSuggestedEvents.setCellFactory(param -> new XCell("Subscribe", "-fx-background-color: #2196F3; -fx-text-fill:  #fff;-fx-border-color:  #90CAF9;-fx-border-width: 0 2 2 0;"));
+        listViewUserEvents.setCellFactory(param -> new XCell("Unsubscribe", "-fx-background-color:  #ffccd5  ; -fx-text-fill: #800f2f; -fx-border-color: #800f2f;-fx-border-width: 0 2 2 0;"));
 
 
     }
@@ -250,6 +260,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         users.setAll(suggestionsForLoggedUser());
         requests.setAll(requestUserDTOS());
         showMessages();
+        notifications.setAll(eventService.getEventsForNotification(networkService.getLoggedUser()));
 
 
     }
@@ -295,7 +306,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
         listOfUsers.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        listOfUsers.setCellFactory(param->new FriendsCell());
+        listOfUsers.setCellFactory(param -> new FriendsCell());
         listOfUsers.setItems(chats);
         listOfUsers.setStyle("-fx-text-fill: #2196f3;");
         tableViewRequests.setItems(requests);
@@ -408,7 +419,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         BorderPane root = loader.load();
 
         SignUpAndLoginController ctrl = loader.getController();
-        ctrl.setServices(userService,friendshipService,networkService,eventService);
+        ctrl.setServices(userService, friendshipService, networkService, eventService);
 
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Social network");
@@ -510,15 +521,15 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     @FXML
     public void handleNotifications() {
-        Iterable<Notification> listOfNotification = eventService.getNotifications(networkService.getLoggedUser());
-        String text = "";
-        for (Notification notif : listOfNotification) {
-            text = text + "\n" + "For " + notif.getNotification_info().getTitle() + " : " + notif.getRemaining_time();
+        StringBuilder text = new StringBuilder();
+        for (Event event : notifications) {
+            text.append("\n").append(event.getTitle().toUpperCase(Locale.ROOT)).append(" in ")
+                    .append(ChronoUnit.DAYS.between(LocalDateTime.now(), event.getDateTime())).append(" days");
         }
-        if (text != "") {
+        if (!text.toString().equals("")) {
             Notifications notification = Notifications.create()
-                    .title("The coming events")
-                    .text(text)
+                    .title("Upcoming events")
+                    .text(text.toString())
                     .graphic(null)
                     .hideAfter(Duration.seconds(10))
                     .position(Pos.CENTER);
@@ -629,9 +640,9 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
             dialogStage.initModality(Modality.WINDOW_MODAL);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
+            dialogStage.setOnCloseRequest(h -> suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser())));
             dialogStage.show();
 
-            suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -644,7 +655,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         Button button = new Button("");
 
 
-        public XCell(String buttonText,String style) {
+        public XCell(String buttonText, String style) {
             super();
             button.setText(buttonText);
             button.setStyle(style);
@@ -661,8 +672,10 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
                     suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
                     userEvents.setAll(eventService.getEventsForUser(networkService.getLoggedUser()));
-                    updateItem(selected, false);
+                    notifications.setAll(eventService.getEventsForNotification(networkService.getLoggedUser()));
+                    updateNotificationLabel();
 
+                    updateItem(selected, false);
 
                 } else {
                     Event selected = getListView().getItems().get(getIndex());
@@ -670,6 +683,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
                     suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
                     userEvents.setAll(eventService.getEventsForUser(networkService.getLoggedUser()));
+                    notifications.setAll(eventService.getEventsForNotification(networkService.getLoggedUser()));
+                    updateNotificationLabel();
 
                     updateItem(selected, false);
 
