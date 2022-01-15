@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class ManageFriendsController implements Observer<RequestsChangeEvent> {
-    private static final int pageSize = 9;
+    private static final int pageSize = 3;
 
     @FXML
     private Label nameLabel;
@@ -150,22 +150,23 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         initializeEvents();
         emailLabel.setText(networkService.getLoggedUser().getEmail());
 
-        int numberOfPages = friends.size() / pageSize;
-        if (numberOfPages <= 0) numberOfPages = 1;
-        friendsPagination.setPageCount(numberOfPages);
+        double numberOfPages = Math.ceil(friends.size() / pageSize);
+        if (numberOfPages < 1) numberOfPages = 1;
+        friendsPagination.setPageCount((int) numberOfPages + 1);
         friendsPagination.setPageFactory(this::createPage);
         friendsPagination.currentPageIndexProperty().addListener((obs, oldIndex, newIndex) ->
                 createPage(newIndex.intValue()));
 
         updateNotificationLabel();
     }
-    private void updateNotificationLabel(){
+
+    private void updateNotificationLabel() {
         if (notifications.size() > 0) {
             notificationsStackPane.setVisible(true);
             notificationsNrLabel.setText(String.valueOf(notifications.size()));
-        }
-        else notificationsStackPane.setVisible(false);
+        } else notificationsStackPane.setVisible(false);
     }
+
     private Node createPage(Integer pageIndex) {
 
         ArrayList<User> friends = networkService.getFriendsOfLoggedUserOnPage(pageIndex, pageSize, networkService.getLoggedUser().getId());
