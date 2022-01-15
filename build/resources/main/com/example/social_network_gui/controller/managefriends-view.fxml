@@ -22,7 +22,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: white;" stylesheets="@../css/login-css.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.ManageFriendsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: white;" stylesheets="@../css/login-css.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.social_network_gui.controller.ManageFriendsController">
    <children>
       <TabPane fx:id="tabPane" prefHeight="700.0" prefWidth="1000.0" styleClass="my-tab" stylesheets="@../css/login-css.css" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -287,7 +287,7 @@
                     <children>
                         <Button fx:id="sendMessage" layoutX="333.0" layoutY="534.0" mnemonicParsing="false" onAction="#handleSendButton" prefHeight="34.0" prefWidth="116.0" style="-fx-background-color: ffccd5;" styleClass="radius" text="Send Message" textFill="#800f2f" />
                         <TextField fx:id="textMessage" layoutX="24.0" layoutY="534.0" prefHeight="34.0" prefWidth="302.0" />
-                        <ScrollPane layoutX="24.0" layoutY="163.0" prefHeight="336.0" prefWidth="435.0">
+                        <ScrollPane fx:id="scrollMessages" layoutX="24.0" layoutY="163.0" prefHeight="336.0" prefWidth="435.0">
                             <content>
                                 <VBox fx:id="vBoxMessage" prefHeight="326.0" prefWidth="424.0" style="-fx-background-color: #E3F2FD;" />
                             </content>
