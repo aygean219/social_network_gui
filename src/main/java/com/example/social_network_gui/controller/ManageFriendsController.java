@@ -10,8 +10,6 @@ import com.example.social_network_gui.utils.Status;
 import com.example.social_network_gui.utils.events.RequestsChangeEvent;
 import com.example.social_network_gui.utils.observer.Observer;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -532,8 +530,11 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     public void handleNotifications() {
         StringBuilder text = new StringBuilder();
         for (Event event : notifications) {
-            text.append("\n").append(event.getTitle().toUpperCase(Locale.ROOT)).append(" in ")
-                    .append(ChronoUnit.DAYS.between(LocalDateTime.now(), event.getDateTime())).append(" days");
+            if (ChronoUnit.DAYS.between(LocalDateTime.now(), event.getDateTime()) < 1)
+                text.append("\n").append(event.getTitle().toUpperCase(Locale.ROOT)).append(" today");
+            else
+                text.append("\n").append(event.getTitle().toUpperCase(Locale.ROOT)).append(" in ")
+                        .append(ChronoUnit.DAYS.between(LocalDateTime.now(), event.getDateTime())).append(" days");
         }
         if (!text.toString().equals("")) {
             Notifications notification = Notifications.create()
@@ -657,15 +658,17 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         }
     }
 
+
     class XCell extends ListCell<Event> {
         HBox hbox = new HBox();
         Label label = new Label("");
         Pane pane = new Pane();
         Button button = new Button("");
-
+        String btntext;
 
         public XCell(String buttonText, String style) {
             super();
+            btntext = buttonText;
             button.setText(buttonText);
             button.setStyle(style);
             hbox.setStyle("-fx-alignment: center");
@@ -709,6 +712,13 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
             if (empty) {
                 setGraphic(null);
             } else {
+                if (ChronoUnit.HOURS.between(LocalDateTime.now(), item.getDateTime()) < 0) {
+                    this.button.setText("Can't subscribe");
+                    this.button.setDisable(true);
+                } else {
+                    this.button.setText(btntext);
+                    this.button.setDisable(false);
+                }
                 label.setText(item != null ? item.toString() : "<null>");
                 setGraphic(hbox);
 

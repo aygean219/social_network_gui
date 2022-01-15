@@ -70,7 +70,7 @@ public class EventsDatabaseRepository implements Repository<Long, Event> {
     public ArrayList<Event> findAll() {
         ArrayList<Event> events = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * from events");
+            PreparedStatement statement = connection.prepareStatement("SELECT * from events ORDER BY date DESC");
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
