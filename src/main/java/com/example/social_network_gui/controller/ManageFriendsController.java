@@ -48,6 +48,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     private static final int pageSize = 3;
 
 
+
     @FXML
     private Label nameLabel;
     @FXML
@@ -87,15 +88,11 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     @FXML
     private Button sendMessage;
     @FXML
-    private Button goBack;
-    @FXML
-    private Button comingEvents;
+    Label errorLabel3;
     @FXML
     private TextField textMessage;
     @FXML
     private TextField groupName;
-    @FXML
-    private Pane replyArea;
     @FXML
     TextField pdfName;
     @FXML
@@ -185,6 +182,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         vBoxMessage.getChildren().clear();
     }
 
+
     private void showMessages() {
         if (this.userTo != null) {
             for (Message msg : networkService.cronological_message(userTo.getId())) {
@@ -198,7 +196,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                         text = new Text(msg.getMessage());
                     }
                     TextFlow textFlow = new TextFlow();
-                    textFlow.setStyle("-fx-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;");
+                    textFlow.setStyle("-fx-border-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;" + "-fx-border-radius: 20px;");
                     textFlow.setPadding(new Insets(5, 5, 5, 5));
                     text.setFill(Color.color(1, 1, 1));
 
@@ -224,19 +222,19 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                     }
 
                     TextFlow textFlow = new TextFlow();
-                    textFlow.setStyle("-fx-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;");
+                    textFlow.setStyle("-fx-border-color: #1976D2 ; " + " -fx-background-color: #64B5F6;" + " -fx-background-radius :20px ;" + "-fx-border-radius: 20px;");
                     textFlow.setPadding(new Insets(5, 5, 5, 5));
                     text.setFill(Color.color(1, 1, 1));
                     EventHandler<MouseEvent> mouseEventHandler
                             = e -> {
                         messageSelected = msg;
-                        textFlow.setStyle(" -fx-background-color: #1976D2;" + " -fx-background-radius :20px ;" + "-fx-border-color:  #0D47A1;" + "-fx-border-radius: 20px");
+                        textFlow.setStyle(" -fx-background-color: #1976D2;" + " -fx-background-radius :20px ;" + "-fx-border-color:  #0D47A1;" + "-fx-border-radius: 20px;");
                     };
                     textFlow.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandler);//
 
                     EventHandler<MouseEvent> mouseEventHandler2
                             = e -> {
-                        textFlow.setStyle("-fx-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;");
+                        textFlow.setStyle("-fx-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;"+ "-fx-border-radius: 20px;");
                     };
                     sendMessage.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandler2);
                     hBox.setPadding(new Insets(5));
@@ -250,6 +248,72 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     }
 
+    @FXML
+    private void refreshForMessages() {
+        vBoxMessage.getChildren().clear();
+        if (this.userTo != null) {
+            for (Message msg : networkService.cronological_message(userTo.getId())) {
+                HBox hBox = new HBox();
+                if (msg.getFrom().getId() == networkService.getLoggedUser().getId()) {
+                    hBox.setAlignment(Pos.CENTER_RIGHT);//my messages are in right
+                    Text text;
+                    if (msg.getReply() != null) {
+                        text = new Text("Reply to: " + msg.getReply().getMessage() + "\n" + msg.getMessage());
+                    } else {
+                        text = new Text(msg.getMessage());
+                    }
+                    TextFlow textFlow = new TextFlow();
+                    textFlow.setStyle("-fx-border-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;"+ "-fx-border-radius: 20px;");
+                    textFlow.setPadding(new Insets(5, 5, 5, 5));
+                    text.setFill(Color.color(1, 1, 1));
+
+                    textFlow.getChildren().add(text);
+                    hBox.setPadding(new Insets(5));
+                    hBox.getChildren().add(textFlow);
+                    vBoxMessage.getChildren().add(hBox);
+                } else {
+                    hBox.setAlignment(Pos.CENTER_LEFT);
+                    Text text;
+                    if (msg.getTo().getUsers().size() <= 1) {
+                        if (msg.getReply() != null) {
+                            text = new Text("Reply to: " + msg.getReply().getMessage() + "\n" + msg.getMessage());
+                        } else {
+                            text = new Text(msg.getMessage());
+                        }
+                    } else {
+                        if (msg.getReply() != null) {
+                            text = new Text("From " + msg.getTo().getName() + ": \n" + "Reply to: " + msg.getReply().getMessage() + "\n" + msg.getMessage());
+                        } else {
+                            text = new Text("From " + msg.getTo().getName() + ": \n" + msg.getMessage());
+                        }
+                    }
+
+                    TextFlow textFlow = new TextFlow();
+                    textFlow.setStyle("-fx-border-color: #1976D2 ; " + " -fx-background-color: #64B5F6;" + " -fx-background-radius :20px ;"+ "-fx-border-radius: 20px;");
+                    textFlow.setPadding(new Insets(5, 5, 5, 5));
+                    text.setFill(Color.color(1, 1, 1));
+                    EventHandler<MouseEvent> mouseEventHandler
+                            = e -> {
+                        messageSelected = msg;
+                        textFlow.setStyle(" -fx-background-color: #1976D2;" + " -fx-background-radius :20px ;" + "-fx-border-color:  #0D47A1;" + "-fx-border-radius: 20px");
+                    };
+                    textFlow.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandler);//
+
+                    EventHandler<MouseEvent> mouseEventHandler2
+                            = e -> {
+                        textFlow.setStyle("-fx-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;"+ "-fx-border-radius: 20px;");
+                    };
+                    sendMessage.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandler2);
+                    hBox.setPadding(new Insets(5));
+                    textFlow.getChildren().add(text);
+                    hBox.getChildren().add(textFlow);
+                    vBoxMessage.getChildren().add(hBox);
+                }
+
+            }
+        }
+
+    }
     private void initializeEvents() {
         suggestedEvents.setAll(eventService.getSuggestedEventsForUser(networkService.getLoggedUser()));
         userEvents.setAll(eventService.getEventsForUser(networkService.getLoggedUser()));
@@ -429,7 +493,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         ctrl.setServices(userService, friendshipService, networkService, eventService);
 
         Stage dialogStage = new Stage();
-        dialogStage.setTitle("Social network");
+        dialogStage.setTitle("Winternet");
         dialogStage.initModality(Modality.WINDOW_MODAL);
         Scene scene = new Scene(root);
         dialogStage.setScene(scene);
@@ -519,6 +583,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                 networkService.send_message(id_to, name_of_group, new_message);
                 textMessage.clear();
                 groupName.clear();
+                refreshForMessages();
             } catch (RepositoryException e) {
                 System.out.println(e.getMessage());
             }
@@ -549,30 +614,38 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
 
     @FXML
     public void handleSendButton() {
-        String new_message = textMessage.getText();
-        List<Long> userList = new ArrayList<>();
+        if(userTo!=null) {
+            String new_message = textMessage.getText();
+            List<Long> userList = new ArrayList<>();
 
 
-        if (messageSelected != null) {
-            networkService.reply_message(messageSelected.getId(), new_message);
-        } else {
-            userList.add(userTo.getId());
-            networkService.send_message(userList, userTo.getFirstName() + " " + userTo.getLastName(), new_message);
+            if (messageSelected != null) {
+                networkService.reply_message(messageSelected.getId(), new_message);
+            } else {
+
+                userList.add(userTo.getId());
+                networkService.send_message(userList, userTo.getFirstName() + " " + userTo.getLastName(), new_message);
+
+            }
+            textMessage.clear();
+            HBox hBox = new HBox();
+            hBox.setAlignment(Pos.CENTER_RIGHT);
+
+            Text text = new Text(new_message);
+            TextFlow textFlow = new TextFlow();
+            textFlow.setStyle("-fx-border-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;"+ "-fx-border-radius: 20px;");
+            textFlow.setPadding(new Insets(5, 10, 5, 10));
+            text.setFill(Color.color(1, 1, 1));
+
+            textFlow.getChildren().add(text);
+            hBox.setPadding(new Insets(5));
+            hBox.getChildren().add(textFlow);
+            vBoxMessage.getChildren().add(hBox);
         }
-        textMessage.clear();
-        HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER_RIGHT);
-
-        Text text = new Text(new_message);
-        TextFlow textFlow = new TextFlow();
-        textFlow.setStyle("-fx-color: #1976D2 ; " + " -fx-background-color: #90CAF9;" + " -fx-background-radius :20px ;");
-        textFlow.setPadding(new Insets(5, 10, 5, 10));
-        text.setFill(Color.color(1, 1, 1));
-
-        textFlow.getChildren().add(text);
-        hBox.setPadding(new Insets(5));
-        hBox.getChildren().add(textFlow);
-        vBoxMessage.getChildren().add(hBox);
+        else{
+            textMessage.clear();
+            errorLabel3.setText("You cannot send a message if you don't select the receiver!");
+        }
     }
 
     private Callback<TableColumn<User, Void>, TableCell<User, Void>> addButtonToTableForMessage() {
@@ -587,9 +660,11 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                     {
                         btn.setOnAction((ActionEvent event) -> {
                             User user_data = getTableView().getItems().get(getIndex());
+                            errorLabel3.setText("");
                             tabPane.getSelectionModel().select(3);
                             setUserTo(user_data);
                             showMessages();
+
 
                         });
                     }

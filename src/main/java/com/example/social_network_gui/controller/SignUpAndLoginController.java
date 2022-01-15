@@ -88,7 +88,7 @@ public class SignUpAndLoginController {
 
 
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Social network");
+            dialogStage.setTitle("Winternet");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
@@ -133,7 +133,7 @@ public class SignUpAndLoginController {
 
 
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Account");
+            dialogStage.setTitle("Winternet");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);

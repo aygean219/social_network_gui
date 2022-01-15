@@ -31,3 +31,29 @@
     -fx-background-color: #BBDEFB;
     -fx-text-fill: #ffccd5;
 }
+.tab {
+
+    -fx-pref-width: 238;
+
+}
+.tab .tab-label {
+    -fx-text-alignment: CENTER;
+    -fx-text-fill: #0D47A1;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.tab-header-background {
+    -fx-background-color:transparent
+}
+
+.tab-pane{
+    -fx-padding: 0 -1 -1 -1
+}
+
+.tab:selected .tab-label {
+    -fx-text-alignment: CENTER;
+    -fx-text-fill: #2196F3;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
