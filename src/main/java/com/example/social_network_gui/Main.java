@@ -63,7 +63,7 @@ public class Main extends Application {
 
 
         primaryStage.setScene(new Scene(root));
-        primaryStage.setTitle("Social Network");
+        primaryStage.setTitle("Winternet");
         //primaryStage.setResizable(false);
         primaryStage.show();
     }
