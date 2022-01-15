@@ -5,6 +5,11 @@ import com.example.social_network_gui.domain.User;
 import com.example.social_network_gui.repository.Repository;
 import com.example.social_network_gui.repository.memory.RepositoryException;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -77,13 +82,31 @@ public class UserDatabaseRepository implements Repository<Long, User> {
 
     @Override
     public Optional<User> save(User entity) {
-        //validator.validate(entity);
         ConvertPassword convertPassword= new ConvertPassword();
+
+        //////////HASH PAROLA///////////
+        String salt="";
+        String hashtext="";
+        try {
+            SecureRandom random = new SecureRandom();
+            Integer randomInt = random.nextInt();
+            salt = randomInt.toString();
+            String p = salt + entity.getPassword();
+
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+
+            byte[] hash = digest.digest(p.getBytes(StandardCharsets.UTF_8));
+            BigInteger no = new BigInteger(1, hash);
+            hashtext = no.toString(16);
+        }catch (NoSuchAlgorithmException ex){
+            ex.printStackTrace();
+        }
 
         String query = "INSERT INTO userr VALUES('" + entity.getId().intValue() + "','"
                 + entity.getFirstName() + "','" + entity.getLastName() + "','"
                 + entity.getDate() + "','" + entity.getGender() + "','"
-                + entity.getEmail() + "','" + convertPassword.encrypt(entity.getPassword())+ "')";
+                + entity.getEmail() + "','" + hashtext + "','" +  salt+"')";
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.execute();
@@ -173,11 +196,10 @@ public class UserDatabaseRepository implements Repository<Long, User> {
     @Override
     public Optional<User> findloggedUser(String email1, String password1){
         ConvertPassword convertPassword= new ConvertPassword();
-        String query = "SELECT * FROM userr WHERE email= ? AND password= ?";
+        String query = "SELECT * FROM userr WHERE email= ? ";
         try(Connection connection = DriverManager.getConnection(url,username,password)){
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1,email1);
-            statement.setString(2,convertPassword.encrypt(password1));
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
@@ -188,12 +210,21 @@ public class UserDatabaseRepository implements Repository<Long, User> {
             String gender = resultSet.getString(5);
             String email = resultSet.getString(6);
             String password = resultSet.getString(7);
-            User user = new User(first_name, last_name, date, gender,email,password);
-            user.setId(id1);
-            return Optional.of(user);
+            String salt=resultSet.getString(8);
+            salt=salt+password1;
+            MessageDigest digest =MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(salt.getBytes(StandardCharsets.UTF_8));
+            BigInteger no = new BigInteger(1, hash);
+            String hashtext = no.toString(16);
+
+            if(hashtext.equals(password)){
+                User user = new User(first_name, last_name, date, gender,email,password);
+                user.setId(id1);
+                return Optional.of(user);
             }
-        } catch (SQLException e) {
-        e.printStackTrace();
+            }
+        } catch (SQLException | NoSuchAlgorithmException ex) {
+        ex.printStackTrace();
         }
         return Optional.empty();
     }

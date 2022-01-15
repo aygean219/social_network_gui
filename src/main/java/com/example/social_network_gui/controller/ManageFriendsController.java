@@ -10,6 +10,8 @@ import com.example.social_network_gui.utils.Status;
 import com.example.social_network_gui.utils.events.RequestsChangeEvent;
 import com.example.social_network_gui.utils.observer.Observer;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -47,6 +49,7 @@ import java.util.stream.StreamSupport;
 public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     private static final int pageSize = 3;
 
+
     @FXML
     private Label nameLabel;
     @FXML
@@ -65,6 +68,8 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
     TableView<UserRequestDTO> tableViewUsers;
     @FXML
     ListView<User> listOfUsers;
+    @FXML
+    ScrollPane scrollMessages;
     @FXML
     Button removeButton;
     @FXML
@@ -158,6 +163,7 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
                 createPage(newIndex.intValue()));
 
         updateNotificationLabel();
+
     }
 
     private void updateNotificationLabel() {
@@ -317,6 +323,9 @@ public class ManageFriendsController implements Observer<RequestsChangeEvent> {
         tableViewUsers.setStyle("-fx-table-cell-border-color: transparent;");
 
         tableViewFriends = createTableFriends();
+        scrollMessages.vvalueProperty().bind(vBoxMessage.heightProperty());
+        scrollMessages.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollMessages.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
     }
 
 
